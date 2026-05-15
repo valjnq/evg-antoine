@@ -629,7 +629,6 @@ h2 {
       <p>Vous <strong>DEVEZ</strong> aller jusqu'au bout.</p>
       <p>2 tours de plateau, chaque équipe compte ses points… et on verra bien ce que ça donne.</p>
       <p><strong>Bonne chance. Vous en aurez besoin.</strong></p>
-      <p><em>Ah &amp; si vous voulez être tatillons sur les règles, le tiroir "règles" comporte les règles de tous les jeux 😉</em></p>
     </div>
     <div class="btn-row" style="margin-top: 16px;">
       <button class="btn" onclick="goTo('screen-equipes')">C'EST PARTI ! 🎮</button>
@@ -722,8 +721,7 @@ h2 {
     <p><strong>Aventuriers !</strong></p>
     <p>Vous allez vous affronter lors d'une épreuve culte : <strong>le Béret !</strong></p>
     <p>Choisissez <strong>3 compétiteurs</strong> dans chacune des équipes. Les 2 restants seront les <strong>Maîtres du Jeu</strong>.</p>
-    <p>🗄️ <span class="warn">Maîtres du Jeu :</span> ouvrez le tiroir numéro <strong>1</strong> et prenez les règles du béret.</p>
-    <p>🗄️ <span class="warn">Compétiteurs :</span> ouvrez le tiroir numéro <strong>3</strong> et sortez le t-shirt qui sera votre béret.</p>
+    <p>🗄️ <span class="warn">Maîtres du Jeu :</span> ouvrez le tiroir numéro <strong>1</strong> — vos instructions s'y trouvent ainsi que le béret (t-shirt).</p>
     <p>Les noms attribués aux compétiteurs sont :<br><strong>— Mbappé — Sergio Rico — Kamara</strong></p>
     <p>L'équipe qui remporte le Béret en marquant <strong>5 points</strong> récupère la carte bonus.</p>
   </div>
@@ -743,7 +741,7 @@ h2 {
     <p>Vous êtes prêts ?</p>
     <p style="font-size:1.1em; font-weight:600; color:var(--accent-blue);">La question est : <br>Combien de champions sont sortis en 2009 sur League of Legends ?</p>
   </div>
-  <div class="chrono-display" id="chrono-08">00:30</div>
+  <div class="chrono-display" id="chrono-08" style="display:none">00:30</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-08', 30, null)">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-08b')">Révéler la réponse 👀</button>
@@ -787,7 +785,7 @@ h2 {
   <div class="narrative-box">
     <p><strong>ON ARRÊTE TOUT !</strong></p>
     <p>ANTOINE ! Ta quête commence maintenant. À la manière de Scott Pilgrim, tu vas devoir affronter tes amis un par un.</p>
-    <p>🗄️ Les règles sont dans le tiroir <strong>7</strong>, enveloppe SCOTT PILGRIM.</p>
+    <p>🗄️ Les règles du ninja sont dans le tiroir <strong>7</strong>.</p>
   </div>
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">PREMIER ADVERSAIRE</div>
@@ -809,9 +807,9 @@ h2 {
   <div class="game-badge">INKFART</div>
   <div class="narrative-box">
     <p>Aïe… Vous venez de tomber sur une <strong>case Inkfart</strong>.</p>
-    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> du paquet dans le tiroir <strong>3</strong> et étalez-les face visible.</p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> du paquet dans le tiroir <strong>3</strong> et étalez-les face visible, côté événement.</p>
     <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, choisissez une carte à tour de rôle jusqu'à ce que chaque équipe en ait 2. La 5ème carte restante retourne dans la pioche.</p>
-    <p>Appliquez les effets et conservez vos cartes devant vous.</p>
+    <p>Appliquez les effets et conservez vos cartes.</p>
   </div>
   <button class="btn" onclick="rollDice('screen-15','karlach',1)">ICI ✅</button>
 </div>
@@ -850,7 +848,7 @@ h2 {
     <p>Quant à l'équipe trahie — vous aurez peut-être l'occasion d'expulser ce traître plus tard. <strong>Soyez vigilants. Observez. Démasquez.</strong></p>
     <p>Ou pas. Car il n'y a peut-être personne.</p>
     <p>Je suis machiavélique. <strong>MOUAHAHAHAHAHA.</strong> 😈</p>
-    <p>🗄️ Ouvrez le tiroir numéro <strong>4</strong>, prenez l'enveloppe de votre équipe et distribuez les cartes — une par personne, en secret.</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>4</strong>, prenez l'enveloppe de <strong>votre</strong> équipe et distribuez les cartes — une par personne, en secret.</p>
     <p><span class="warn">⚠️ Attention à ne pas dévoiler le dos de votre carte !</span></p>
   </div>
   <button class="btn" onclick="goTo('screen-17b')">Rôles connus ! 🃏</button>
@@ -864,7 +862,7 @@ h2 {
   <div class="screen-icon">🥊</div>
   <div class="narrative-box">
     <p>ANTOINE ! Tu viens de découvrir ton destin… mais un <strong>nouvel ennemi</strong> se dresse devant toi.</p>
-    <p>🗄️ Les règles sont dans le tiroir numéro <strong>7</strong>, enveloppe SCOTT PILGRIM.</p>
+    <p>🗄️ Les règles du ninja sont dans le tiroir <strong>7</strong>.</p>
   </div>
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">DEUXIÈME ADVERSAIRE</div>
@@ -919,7 +917,7 @@ h2 {
   <div class="game-badge">INKFART</div>
   <div class="narrative-box">
     <p><strong>Encore vous...</strong></p>
-    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche (tiroir <strong>3</strong>) et étalez-les face visible.</p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche (tiroir <strong>3</strong>) et étalez-les face visible, côté événement.</p>
     <p>En commençant par l'équipe <strong>Karlach</strong>, choisissez une carte à tour de rôle.</p>
     <p>La 5ème carte restante retourne dans la pioche. Appliquez les effets.</p>
   </div>
@@ -986,7 +984,7 @@ h2 {
     <p><em>Bonus — 2 points supplémentaires : qui sont les deux champions avec le plus de skins ?</em></p>
     <p>Vous avez <strong>30 secondes</strong>. Décidez et dévoilez votre réponse !</p>
   </div>
-  <div class="chrono-display" id="chrono-27b">00:30</div>
+  <div class="chrono-display" id="chrono-27b" style="display:none">00:30</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-27b', 30, null)">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-27c')">Révéler la réponse 👀</button>
@@ -1014,7 +1012,7 @@ h2 {
   <div class="screen-icon">🥢</div>
   <div class="game-badge">BÂTONS</div>
   <div class="narrative-box">
-    <p>🗄️ Ouvrez le tiroir numéro <strong>6</strong> et récupérez les <strong>18 bâtonnets</strong>.</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>6</strong>, récupérez les <strong>18 bâtonnets</strong> et étalez-les devant vous.</p>
     <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, retirez <strong>1, 2 ou 3 bâtonnets</strong> à tour de rôle.</p>
     <p>Le but est simple : <strong>NE PAS</strong> se retrouver avec le dernier bâtonnet.</p>
     <p>L'équipe qui prend le dernier bâtonnet a <strong>PERDU</strong>.</p>
@@ -1092,7 +1090,7 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-35b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Garbage Truck</div>
   <div class="btn-row" id="scott4-btn">
-    <button class="btn" onclick="rollDice('screen-36','ombrecoeur',4)">Passer →</button>
+    <button class="btn" onclick="rollDice('screen-36b','ombrecoeur',4)">Passer →</button>
   </div>
 </div>
 
@@ -1123,7 +1121,7 @@ h2 {
     <p><span class="warn">⚠️ Si aucune équipe n'a réussi dans le temps imparti : -4 points pour tout le monde.</span></p>
     <p><strong>Bonne chance… vous en aurez besoin. ⏱️</strong></p>
   </div>
-  <div class="chrono-display" id="chrono-37">05:00</div>
+  <div class="chrono-display" id="chrono-37" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn" onclick="startChrono('chrono-37', 300, 'screen-37b')">Lancer le chrono ! ⏱️</button>
   </div>
@@ -1178,7 +1176,7 @@ h2 {
     <p>Mais gardez le secret de votre identité jusqu'à la fin.</p>
     <p><strong>Le compte à rebours commence maintenant. 🕐</strong></p>
   </div>
-  <div class="chrono-display" id="chrono-41">03:00</div>
+  <div class="chrono-display" id="chrono-41" style="display:none">03:00</div>
   <div id="btn-41-start" class="btn-row">
     <button class="btn" onclick="startChrono('chrono-41', 180, null); document.getElementById('btn-41-start').style.display='none';">Lancer le chrono ! ⏱️</button>
   </div>
@@ -1259,7 +1257,7 @@ h2 {
     <p>40 jours sur une île, pas de douche, pas de confort. Mais vous tenez encore debout. À peine.</p>
     <p>Tenue, pose, regard de naufragé... <strong>GO !</strong></p>
   </div>
-  <div class="chrono-display" id="chrono-45a">05:00</div>
+  <div class="chrono-display" id="chrono-45a" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-45a', 300, null)">⏱ Lancer Round 1</button>
     <button class="btn" onclick="goTo('screen-45b')">Photo prise ! 📸</button>
@@ -1273,7 +1271,7 @@ h2 {
     <p>Vous venez d'infiltrer la base ennemie. Vous êtes classe, dangereux, imperturbables.</p>
     <p>Tenue, pose, regard de tueur... <strong>GO !</strong></p>
   </div>
-  <div class="chrono-display" id="chrono-45b">05:00</div>
+  <div class="chrono-display" id="chrono-45b" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-45b', 300, null)">⏱ Lancer Round 2</button>
     <button class="btn" onclick="goTo('screen-45c')">Photo prise ! 📸</button>
@@ -1287,7 +1285,7 @@ h2 {
     <p>Antoine vient de marquer le but de la victoire en finale. Vous êtes dans les tribunes. C'est historique.</p>
     <p>Tenue, pose, larmes de joie... <strong>GO !</strong></p>
   </div>
-  <div class="chrono-display" id="chrono-45c">05:00</div>
+  <div class="chrono-display" id="chrono-45c" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-45c', 300, null)">⏱ Lancer Round 3</button>
     <button class="btn" onclick="goTo('screen-45d')">Photo prise ! 📸</button>
@@ -1312,9 +1310,9 @@ h2 {
   <div class="game-badge">INKFART</div>
   <div class="narrative-box">
     <p><strong>Encore...</strong></p>
-    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche et étalez-les face visible.</p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche et étalez-les face visible, côté événement.</p>
     <p>En commençant par l'équipe <strong>Karlach</strong>, choisissez une carte à tour de rôle.</p>
-    <p>Appliquez les effets et conservez vos cartes devant vous.</p>
+    <p>Appliquez les effets et conservez vos cartes.</p>
   </div>
   <button class="btn" onclick="rollDice('screen-49','ombrecoeur',1)">Cartes appliquées ! ✅</button>
 </div>
@@ -1356,7 +1354,7 @@ h2 {
   <div class="game-badge">BÂTONS</div>
   <div class="narrative-box">
     <p><strong>On remet ça !</strong></p>
-    <p>🗄️ Récupérez les bâtonnets dans le tiroir numéro <strong>6</strong> et remettez-les en place.</p>
+    <p>🗄️ Récupérez les bâtonnets dans le tiroir numéro <strong>6</strong>, étalez-les devant vous et remettez-les en place.</p>
     <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, retirez <strong>1, 2 ou 3 bâtonnets</strong> à tour de rôle.</p>
     <p>Le but est simple : <strong>NE PAS</strong> se retrouver avec le dernier bâtonnet.</p>
     <p>L'équipe gagnante remporte <strong>4 points</strong>. 😏</p>
@@ -1383,7 +1381,7 @@ h2 {
   <div class="narrative-box">
     <p style="font-size:1.1em; color:var(--accent-blue); font-weight:700;">Depuis le début des compétitions internationales, quel est le pourcentage d'équipes européennes qui ont atteint le top 4 ?</p>
   </div>
-  <div class="chrono-display" id="chrono-55b">00:30</div>
+  <div class="chrono-display" id="chrono-55b" style="display:none">00:30</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-55b', 30, null)">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-55c')">Révéler la réponse 👀</button>
@@ -1407,7 +1405,7 @@ h2 {
   <div class="screen-icon">🥊</div>
   <div class="narrative-box">
     <p>ANTOINE ! Un autre <strong>démon surgit des ténèbres</strong>.</p>
-    <p>🗄️ Les règles sont dans le tiroir numéro <strong>X</strong>, enveloppe SCOTT PILGRIM.</p>
+    <p>🗄️ Les règles du ninja sont dans le tiroir <strong>7</strong>.</p>
   </div>
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">SIXIÈME ADVERSAIRE</div>
@@ -1429,9 +1427,9 @@ h2 {
   <div class="game-badge">INKFART</div>
   <div class="narrative-box">
     <p><strong>Encore vous...</strong></p>
-    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche et étalez-les face visible.</p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche et étalez-les face visible, côté événement.</p>
     <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, choisissez une carte à tour de rôle.</p>
-    <p>Appliquez les effets et conservez vos cartes devant vous.</p>
+    <p>Appliquez les effets et conservez vos cartes.</p>
   </div>
   <button class="btn" onclick="rollDice('screen-59','karlach',3)">Cartes appliquées ! ✅</button>
 </div>
@@ -1468,7 +1466,7 @@ h2 {
   <div class="narrative-box">
     <p style="font-size:1.1em; color:var(--accent-blue); font-weight:700;">Combien y a-t-il eu de games jouées dans le monde en 2025 ?</p>
   </div>
-  <div class="chrono-display" id="chrono-61b">00:30</div>
+  <div class="chrono-display" id="chrono-61b" style="display:none">00:30</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-61b', 30, null)">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-61c')">Révéler la réponse 👀</button>
@@ -1495,7 +1493,7 @@ h2 {
     <p><strong>ANTOINE !</strong></p>
     <p>Tu y es presque...</p>
     <p>Dernier adversaire. Le septième. Le boss final.</p>
-    <p>🗄️ Les règles sont dans le tiroir numéro <strong>X</strong>, enveloppe SCOTT PILGRIM.</p>
+    <p>🗄️ Les règles du ninja sont dans le tiroir <strong>7</strong>.</p>
   </div>
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">SEPTIÈME ADVERSAIRE</div>
@@ -1788,6 +1786,7 @@ function startChrono(elId, seconds, onEndScreen) {
   const el = document.getElementById(elId);
   if (!el) return;
 
+  el.style.display = ''; // afficher le chrono
   updateChronoDisplay(el, remaining);
 
   chronoInterval = setInterval(() => {
@@ -1821,6 +1820,11 @@ function stopChrono() {
     clearInterval(chronoInterval);
     chronoInterval = null;
   }
+  // Remettre tous les chronos cachés
+  ['chrono-08','chrono-27b','chrono-37','chrono-41','chrono-45a','chrono-45b','chrono-45c','chrono-55b','chrono-61b'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 
 function updateChronoDisplay(el, seconds) {
