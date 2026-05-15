@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>L'Univers d'Antoine — EVG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VARIABLES & RESET
+============================================================ */
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --border: #2a2a3a;
+  --text: #f0f0f0;
+  --muted: #888;
+  --accent-yellow: #f7c948;
+  --accent-red: #e63946;
+  --accent-blue: #4cc9f0;
+  --accent-purple: #7b2d8b;
+  --accent-green: #57cc99;
+  --accent-orange: #f4803a;
+  --font-title: 'Press Start 2P', monospace;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --screen-radius: 16px;
+  --glow-yellow: 0 0 20px rgba(247,201,72,0.4);
+  --glow-red: 0 0 20px rgba(230,57,70,0.4);
+  --glow-blue: 0 0 20px rgba(76,201,240,0.4);
+  --glow-purple: 0 0 20px rgba(123,45,139,0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   SCANLINE OVERLAY
+============================================================ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ============================================================
+   APP WRAPPER
+============================================================ */
+#app {
+  width: 100%; height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SCREENS — no scroll, tout doit tenir dans l'écran
+============================================================ */
+.screen {
+  position: absolute; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 40px;
+  gap: clamp(8px, 1.5vh, 18px);
+  overflow: hidden;
+  height: 100dvh;
+  animation: screenIn 0.4s ease forwards;
+}
+.screen.active { display: flex; }
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   TYPOGRAPHY
+============================================================ */
+
+
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 5vw, 56px);
+  line-height: 1;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3.5vw, 38px);
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.body-text {
+  font-size: clamp(12px, 1.6vw, 16px);
+  line-height: 1.6;
+  text-align: center;
+  max-width: 680px;
+  color: #ddd;
+}
+
+.body-text strong { color: var(--text); }
+
+/* ============================================================
+   ACCENT COLORS PER SCREEN TYPE
+============================================================ */
+.theme-intro    { --accent: var(--accent-yellow); --glow: var(--glow-yellow); }
+.theme-kohlanta { --accent: var(--accent-red);    --glow: var(--glow-red); }
+.theme-lol      { --accent: var(--accent-blue);   --glow: var(--glow-blue); }
+.theme-dow      { --accent: var(--accent-purple);  --glow: var(--glow-purple); }
+.theme-munchkin { --accent: var(--accent-orange);  --glow: 0 0 20px rgba(244,128,58,0.4); }
+.theme-scott    { --accent: var(--accent-green);   --glow: 0 0 20px rgba(87,204,153,0.4); }
+.theme-pokemon  { --accent: #ffcb05;               --glow: 0 0 20px rgba(255,203,5,0.4); }
+.theme-escape   { --accent: #ff006e;               --glow: 0 0 20px rgba(255,0,110,0.4); }
+.theme-photo    { --accent: #a8dadc;               --glow: 0 0 20px rgba(168,218,220,0.4); }
+.theme-fin      { --accent: var(--accent-yellow);  --glow: var(--glow-yellow); }
+.theme-inkfart  { --accent: #b5838d;               --glow: 0 0 20px rgba(181,131,141,0.4); }
+.theme-neutre   { --accent: #aaa;                  --glow: none; }
+
+/* Dynamic accent applied */
+.screen-icon { font-size: clamp(32px, 6vh, 56px); filter: drop-shadow(0 0 12px var(--accent, #fff)); flex-shrink: 0; }
+
+/* ============================================================
+   ICON / BADGE
+============================================================ */
+.game-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px;
+  border: 2px solid var(--accent, var(--border));
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: clamp(14px, 2vw, 20px);
+  letter-spacing: 1px;
+  color: var(--accent, var(--text));
+  box-shadow: var(--glow, none);
+  background: rgba(255,255,255,0.04);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: clamp(10px, 1.5vh, 16px) clamp(20px, 3vw, 36px);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: clamp(15px, 2.2vw, 22px);
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  background: var(--accent, #f0f0f0);
+  color: #0a0a0f;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.4), var(--glow, none);
+  text-transform: uppercase;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent, #f0f0f0);
+  border: 2px solid var(--accent, #f0f0f0);
+  box-shadow: var(--glow, none);
+}
+
+.btn-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+/* ============================================================
+   DIVIDER
+============================================================ */
+.divider {
+  width: 100%;
+  max-width: 400px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent, #333), transparent);
+  border: none;
+}
+
+/* ============================================================
+   TEAM DISPLAY (écran équipes)
+============================================================ */
+.teams-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 2vw, 20px);
+  width: 100%;
+  max-width: 900px;
+  flex-shrink: 1;
+}
+
+.team-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--screen-radius);
+  padding: clamp(12px, 2vh, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.5vh, 14px);
+}
+.team-card.ombrecoeur { border-color: #e63946; }
+.team-card.karlach    { border-color: #4cc9f0; }
+
+.team-name {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.5vw, 28px);
+  letter-spacing: 2px;
+  text-align: center;
+}
+.team-name.ombrecoeur { color: #e63946; text-shadow: 0 0 16px rgba(230,57,70,0.5); }
+.team-name.karlach    { color: #4cc9f0; text-shadow: 0 0 16px rgba(76,201,240,0.5); }
+
+.players-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(6px, 1vw, 10px);
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: clamp(8px, 1.2vh, 12px) 6px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.player-avatar {
+  width: clamp(40px, 6vh, 56px);
+  height: clamp(40px, 6vh, 56px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  background: var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  overflow: hidden;
+}
+.player-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.player-name {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.8vw, 18px);
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* ============================================================
+   DÉ ANIMATION
+============================================================ */
+#dice-screen { gap: clamp(16px, 3vh, 32px); }
+
+.dice-wrap {
+  perspective: 600px;
+  width: 120px; height: 120px;
+  margin: 0 auto;
+}
+
+.dice {
+  width: 120px; height: 120px;
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: 18px;
+}
+
+.dice.rolling {
+  animation: diceRoll 1.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+@keyframes diceRoll {
+  0%   { transform: rotateX(0deg)   rotateY(0deg)   rotateZ(0deg); }
+  20%  { transform: rotateX(180deg) rotateY(90deg)  rotateZ(45deg); }
+  40%  { transform: rotateX(360deg) rotateY(200deg) rotateZ(90deg); }
+  60%  { transform: rotateX(540deg) rotateY(300deg) rotateZ(180deg); }
+  80%  { transform: rotateX(680deg) rotateY(400deg) rotateZ(250deg); }
+  100% { transform: rotateX(720deg) rotateY(450deg) rotateZ(270deg); }
+}
+
+.dice-face {
+  position: absolute; inset: 0;
+  background: #f0f0f0;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+  font-weight: 900;
+  color: #111;
+  box-shadow: inset 0 0 0 3px #ccc;
+}
+
+.dice-result-number {
+  font-family: var(--font-title);
+  font-size: clamp(48px, 10vh, 80px);
+  color: var(--accent-yellow);
+  text-shadow: 0 0 30px rgba(247,201,72,0.7);
+  display: none;
+  line-height: 1;
+}
+.dice-result-number.visible { display: block; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+@keyframes popIn {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.dice-team-label {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 28px);
+  letter-spacing: 2px;
+  text-align: center;
+}
+.dice-team-label.ombrecoeur { color: #e63946; }
+.dice-team-label.karlach    { color: #4cc9f0; }
+
+/* ============================================================
+   CHRONO
+============================================================ */
+.chrono-display {
+  font-family: var(--font-title);
+  font-size: clamp(28px, 5vw, 56px);
+  color: var(--accent, var(--accent-yellow));
+  text-shadow: 0 0 24px var(--accent, rgba(247,201,72,0.6));
+  letter-spacing: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.chrono-display.urgent { color: #e63946; text-shadow: 0 0 24px rgba(230,57,70,0.8); animation: blink 0.6s step-end infinite; }
+@keyframes blink { 50% { opacity: 0.3; } }
+
+/* ============================================================
+   SCOTT PILGRIM
+============================================================ */
+.vs-text {
+  font-family: var(--font-title);
+  font-size: clamp(20px, 4vw, 42px);
+  color: var(--accent-green);
+  text-shadow: 0 0 24px rgba(87,204,153,0.8);
+  letter-spacing: 4px;
+  animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+  0%, 95%, 100% { transform: none; text-shadow: 0 0 24px rgba(87,204,153,0.8); }
+  96% { transform: translate(-3px, 1px); text-shadow: 3px 0 #e63946, -3px 0 #4cc9f0; }
+  97% { transform: translate(3px, -1px); text-shadow: -3px 0 #e63946, 3px 0 #4cc9f0; }
+  98% { transform: translate(-1px, 2px); text-shadow: 2px 0 #e63946, -2px 0 #4cc9f0; }
+  99% { transform: none; }
+}
+
+.fight-badge {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 6vw, 64px);
+  color: #fff;
+  background: #e63946;
+  padding: 8px 32px;
+  border-radius: 6px;
+  letter-spacing: 4px;
+  box-shadow: 4px 4px 0 #7a0000;
+}
+
+.music-progress {
+  width: 100%;
+  max-width: 400px;
+  height: 6px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.music-bar {
+  height: 100%;
+  background: var(--accent-green);
+  box-shadow: 0 0 10px rgba(87,204,153,0.6);
+  width: 0%;
+  transition: width 0.5s linear;
+}
+
+/* ============================================================
+   GIF DISPLAY
+============================================================ */
+.gif-container {
+  width: clamp(140px, 22vh, 220px);
+  height: clamp(140px, 22vh, 220px);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid var(--accent-yellow);
+  box-shadow: var(--glow-yellow);
+  display: none;
+  flex-shrink: 0;
+}
+.gif-container.visible { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.gif-container img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ============================================================
+   POKÉBALL
+============================================================ */
+.pokeball {
+  width: 120px; height: 120px;
+  position: relative;
+  cursor: pointer;
+}
+.pokeball-anim {
+  animation: pokeSpin 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) 3;
+}
+@keyframes pokeSpin {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+.pokeball svg { width: 100%; height: 100%; filter: drop-shadow(0 0 16px rgba(255,203,5,0.5)); }
+
+/* ============================================================
+   STAR ANIMATION
+============================================================ */
+.star-burst {
+  font-size: clamp(48px, 8vh, 80px);
+  flex-shrink: 0;
+  animation: starPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes starPop {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ============================================================
+   CONFETTI (fin de partie)
+============================================================ */
+.confetti-piece {
+  position: fixed;
+  width: 10px; height: 14px;
+  border-radius: 2px;
+  top: -20px;
+  animation: confettiFall linear forwards;
+  pointer-events: none;
+  z-index: 100;
+}
+@keyframes confettiFall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+}
+
+/* ============================================================
+   NARRATIVE BOX
+============================================================ */
+.narrative-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent, #f7c948);
+  border-radius: 12px;
+  padding: clamp(12px, 2vh, 20px) clamp(16px, 2.5vw, 24px);
+  max-width: 720px;
+  width: 100%;
+  text-align: left;
+  flex-shrink: 1;
+  min-height: 0;
+}
+.narrative-box p { font-size: clamp(12px, 1.6vw, 15px); line-height: 1.65; color: #ddd; margin-bottom: clamp(6px, 1vh, 10px); }
+.narrative-box p:last-child { margin-bottom: 0; }
+.narrative-box strong { color: var(--accent, var(--accent-yellow)); }
+.narrative-box em { color: var(--muted); font-style: normal; font-size: 0.9em; }
+.narrative-box .warn { color: #f4803a; font-weight: 600; }
+
+/* ============================================================
+   DEAD OF WINTER ATMOSPHERE
+============================================================ */
+.dow-atmosphere {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(123,45,139,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   LOGO PLACEHOLDER SVG helpers
+============================================================ */
+.logo-img {
+  width: auto;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px var(--accent, transparent));
+}
+
+/* Placeholder colored boxes when image missing */
+.placeholder-logo {
+  width: 80px; height: 80px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  background: rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255,255,255,0.2);
+}
+
+
+
+
+/* ============================================================
+   SCROLL HELPER
+============================================================ */
+.scroll-hint {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  font-size: 22px;
+  color: var(--muted);
+  pointer-events: none;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+/* ============================================================
+   AUDIO STATUS (debug, hidden in prod)
+============================================================ */
+#audio-status {
+  position: fixed; bottom: 12px; left: 12px;
+  font-size: 11px; color: var(--muted);
+  font-family: monospace;
+  pointer-events: none;
+  display: none; /* show: flex for debug */
+}
+
+</style>
+</head>
+<body>
+
+
+<!-- AUDIO STATUS -->
+<div id="audio-status">🔊 <span id="audioStatusText">—</span></div>
+
+<div id="app">
+
+<!-- ===================================================
+  ÉCRAN 01 — Introduction
+=================================================== -->
+<div class="screen theme-intro" id="screen-01">
+  <h1 style="color:var(--accent-yellow); text-shadow:0 0 30px rgba(247,201,72,0.5);">L'UNIVERS<br>D'ANTOINE</h1>
+  <hr class="divider">
+  <!-- Texte lu + audio narration -->
+  <div class="narrative-box" id="intro-text-1">
+    <p>Bienvenue… dans l'univers d'Antoine.</p>
+    <p>Ce que vous vous apprêtez à vivre est <strong>inclassifiable</strong>. Imprévisible. Peut-être même un peu dangereux.</p>
+    <p>Les conditions de victoire ? <strong>Personne ne les connaît. Pas même nous.</strong></p>
+  </div>
+  <!-- GIF Denis Brognart (caché jusqu'au déclenchement) -->
+  <div class="gif-container" id="gif-brognart">
+    <img src="img/brognart.gif" alt="Denis Brognart" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:60px\'>🏝️</div>'">
+  </div>
+  <!-- Texte 2 (caché) -->
+  <div class="narrative-box" id="intro-text-2" style="display:none">
+    <p>Vous <strong>DEVEZ</strong> aller jusqu'au bout.</p>
+    <p>2 tours de plateau, chaque équipe compte ses points… et on verra bien ce que ça donne.</p>
+    <p><strong>Bonne chance. Vous en aurez besoin.</strong></p>
+    <p><em>Ah &amp; si vous voulez être tatillons sur les règles, le tiroir "règles" comporte les règles de tous les jeux 😉</em></p>
+  </div>
+  <div class="btn-row" id="intro-btn-row" style="display:none">
+    <button class="btn" onclick="goTo('screen-equipes')">C'EST PARTI ! 🎮</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN ÉQUIPES
+=================================================== -->
+<div class="screen theme-intro" id="screen-equipes">
+  <h2>VOICI VOS ÉQUIPES D'AVENTURIERS !</h2>
+  <div class="teams-grid">
+    <!-- OMBRECOEUR -->
+    <div class="team-card ombrecoeur">
+      <div class="team-name ombrecoeur">⚔️ OMBRECOEUR</div>
+      <div class="players-row">
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/jason.jpg" alt="Jason" onerror="this.parentElement.innerHTML='🧔'"></div>
+          <div class="player-name">Jason</div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/achille.jpg" alt="Achille" onerror="this.parentElement.innerHTML='🧑'"></div>
+          <div class="player-name">Achille</div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/fabien.jpg" alt="Fabien" onerror="this.parentElement.innerHTML='🧑'"></div>
+          <div class="player-name">Fabien</div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/antoine.jpg" alt="Antoine" onerror="this.parentElement.innerHTML='🤵'"></div>
+          <div class="player-name">Antoine</div>
+        </div>
+      </div>
+    </div>
+    <!-- KARLACH -->
+    <div class="team-card karlach">
+      <div class="team-name karlach">🔵 KARLACH</div>
+      <div class="players-row">
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/noe.jpg" alt="Noé" onerror="this.parentElement.innerHTML='🧑'"></div>
+          <div class="player-name">Noé</div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/gwendal.jpg" alt="Gwendal" onerror="this.parentElement.innerHTML='🧑'"></div>
+          <div class="player-name">Gwendal</div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/aymeric.jpg" alt="Aymeric" onerror="this.parentElement.innerHTML='🧑'"></div>
+          <div class="player-name">Aymeric</div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar"><img src="img/maxime.jpg" alt="Maxime" onerror="this.parentElement.innerHTML='🧑'"></div>
+          <div class="player-name">Maxime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn" onclick="rollDice('screen-06','ombrecoeur',3)">🎲 Lancer le dé pour commencer</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN DÉ (générique, réutilisé)
+=================================================== -->
+<div class="screen theme-neutre" id="screen-dice">
+  <div class="dice-team-label" id="diceTeamLabel"></div>
+  <div class="dice-wrap">
+    <div class="dice" id="diceEl">
+      <div class="dice-face">🎲</div>
+    </div>
+  </div>
+  <div class="dice-result-number" id="diceResult"></div>
+  <!-- next screen auto-triggered by JS -->
+</div>
+
+<!-- ===================================================
+  ÉCRAN 06 — Béret Koh-Lanta
+=================================================== -->
+<div class="screen theme-kohlanta" id="screen-06">
+  <div class="screen-icon">🏝️</div>
+  <div class="game-badge">KOH LANTA — LE BÉRET</div>
+  <div class="narrative-box">
+    <p><strong>Aventuriers !</strong></p>
+    <p>Vous allez vous affronter lors d'une épreuve culte : <strong>le Béret !</strong></p>
+    <p>Choisissez <strong>3 compétiteurs</strong> dans chacune des équipes. Les 2 restants seront les <strong>Maîtres du Jeu</strong>.</p>
+    <p>🗄️ <span class="warn">Maîtres du Jeu :</span> ouvrez le tiroir numéro <strong>1</strong> et prenez les règles du béret.</p>
+    <p>🗄️ <span class="warn">Compétiteurs :</span> ouvrez le tiroir numéro <strong>3</strong> et sortez le t-shirt qui sera votre béret.</p>
+    <p>Les noms attribués aux compétiteurs sont :<br><strong>— Mbappé — Sergio Rico — Kamara</strong></p>
+    <p>L'équipe qui remporte le Béret en marquant <strong>5 points</strong> récupère la carte bonus.</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-08','ombrecoeur',1)">Épreuve terminée ! 🏁</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 08 — LOL #1
+=================================================== -->
+<div class="screen theme-lol" id="screen-08">
+  <div class="screen-icon">🎮</div>
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p>Une question va vous être posée. Chaque équipe a le droit à <strong>UNE réponse</strong>.</p>
+    <p>Écrivez votre réponse sur un téléphone et dévoilez-la après le compte à rebours.</p>
+    <p>La question est volontairement difficile — l'idée est d'être <strong>l'équipe la plus proche</strong> de la bonne réponse.</p>
+    <p>Vous êtes prêts ?</p>
+    <p style="font-size:1.1em; font-weight:600; color:var(--accent-blue);">La question est : <br>Combien de champions sont sortis en 2009 sur League of Legends ?</p>
+  </div>
+  <div class="chrono-display" id="chrono-08">00:30</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-08', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn" onclick="goTo('screen-08b')">Révéler la réponse 👀</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 08b — Révélation LOL #1
+=================================================== -->
+<div class="screen theme-lol" id="screen-08b">
+  <div class="screen-icon">💡</div>
+  <div class="narrative-box">
+    <p>La bonne réponse était : <strong style="font-size:1.4em;color:var(--accent-blue);">42 !</strong></p>
+    <p>L'équipe la plus proche remporte <strong>2 points</strong>.</p>
+    <p><em>En cas d'égalité, les deux équipes marquent les points.</em></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-10','karlach',6)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 10 — Munchkin #1
+=================================================== -->
+<div class="screen theme-munchkin" id="screen-10">
+  <div class="screen-icon">⚔️</div>
+  <div class="game-badge">MUNCHKIN</div>
+  <div class="narrative-box">
+    <p>Il est temps de <strong>frapper à la porte du donjon !</strong></p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>2</strong> et prenez le paquet de cartes Munchkin.</p>
+    <p>En commençant par l'équipe qui a atterri sur cette case, chacune frappe à son tour — retournez la première carte du paquet et appliquez immédiatement l'effet.</p>
+    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot ! L'effet s'inverse.</span></p>
+  </div>
+  <button class="btn" onclick="goTo('screen-11')">Effets appliqués ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 11 — Scott Pilgrim #1
+=================================================== -->
+<div class="screen theme-scott" id="screen-11">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p><strong>ON ARRÊTE TOUT !</strong></p>
+    <p>ANTOINE ! Ta quête commence maintenant. À la manière de Scott Pilgrim, tu vas devoir affronter tes amis un par un.</p>
+    <p>🗄️ Les règles sont dans le tiroir <strong>7</strong>, enveloppe SCOTT PILGRIM.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">PREMIER ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">NOÉ</div>
+    <div class="fight-badge">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-11"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);" id="music-11-label">♪ Threshold — Anamanaguchi</div>
+  <div class="btn-row" id="scott1-btn">
+    <button class="btn" onclick="rollDice('screen-13','ombrecoeur',4)">Suivant →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 13 — Inkfart #1
+=================================================== -->
+<div class="screen theme-inkfart" id="screen-13">
+  <div class="screen-icon">🃏</div>
+  <div class="game-badge">INKFART</div>
+  <div class="narrative-box">
+    <p>Aïe… Vous venez de tomber sur une <strong>case Inkfart</strong>.</p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> du paquet dans le tiroir <strong>3</strong> et étalez-les face visible.</p>
+    <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, choisissez une carte à tour de rôle jusqu'à ce que chaque équipe en ait 2. La 5ème carte restante retourne dans la pioche.</p>
+    <p>Appliquez les effets et conservez vos cartes devant vous.</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-15','karlach',1)">ICI ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 15 — Koh Lanta #2 Dégustation
+=================================================== -->
+<div class="screen theme-kohlanta" id="screen-15">
+  <div class="screen-icon">🍽️</div>
+  <div class="game-badge">KOH LANTA — DÉGUSTATION</div>
+  <div class="narrative-box">
+    <p><strong>Vous revoilà aventuriers !</strong></p>
+    <p>Aujourd'hui, épreuve culte : <strong>la dégustation !</strong></p>
+    <p>Chaque équipe choisit <strong>UN participant courageux</strong>.</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>6</strong> — votre destin s'y trouve.</p>
+    <p>La règle est simple : si vous terminez ce qui est dans votre assiette, votre équipe remporte <strong>3 points</strong>.</p>
+    <p>Les deux équipes peuvent gagner… ou perdre. Tout dépend de votre courage.</p>
+    <p><strong>Bon appétit !</strong> 🍴</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-17','ombrecoeur',2)">Épreuve terminée ! 🏁</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 17 — Dead of Winter #1
+=================================================== -->
+<div class="screen theme-dow" id="screen-17">
+  <div class="dow-atmosphere"></div>
+  <div class="screen-icon">🧟</div>
+  <div class="game-badge">DEAD OF WINTER</div>
+  <div class="narrative-box">
+    <p><strong>Ah ! On y arrive enfin…</strong></p>
+    <p>Vous pensiez faire un jeu sympathique entre amis. Comme c'est mignon.</p>
+    <p>Mais à partir de maintenant… <strong>le doute s'installera</strong> dans cette équipe.</p>
+    <p>J'ai choisi des cartes pour chacun d'entre vous. Et parmi ces cartes, il y a <strong>PEUT-ÊTRE</strong> une carte traître.</p>
+    <p>Si c'est le cas, la personne devenue traître devra tout faire pour <strong>saboter son équipe</strong>.</p>
+    <p>Quant à l'équipe trahie — vous aurez peut-être l'occasion d'expulser ce traître plus tard. <strong>Soyez vigilants. Observez. Démasquez.</strong></p>
+    <p>Ou pas. Car il n'y a peut-être personne.</p>
+    <p>Je suis machiavélique. <strong>MOUAHAHAHAHAHA.</strong> 😈</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>4</strong>, prenez l'enveloppe de votre équipe et distribuez les cartes — une par personne, en secret.</p>
+    <p><span class="warn">⚠️ Attention à ne pas dévoiler le dos de votre carte !</span></p>
+  </div>
+  <button class="btn" onclick="goTo('screen-17b')">Rôles connus ! 🃏</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 17b — Scott Pilgrim #2
+=================================================== -->
+<div class="screen theme-scott" id="screen-17b">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p>ANTOINE ! Tu viens de découvrir ton destin… mais un <strong>nouvel ennemi</strong> se dresse devant toi.</p>
+    <p>🗄️ Les règles sont dans le tiroir numéro <strong>7</strong>, enveloppe SCOTT PILGRIM.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">DEUXIÈME ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">GWENDAL</div>
+    <div class="fight-badge">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-17b"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Nippon Ichi — Anamanaguchi</div>
+  <div class="btn-row" id="scott2-btn">
+    <button class="btn" onclick="rollDice('screen-19','karlach',4)">Passer →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 19 — Bluff
+=================================================== -->
+<div class="screen theme-neutre" id="screen-19">
+  <div class="screen-icon">😏</div>
+  <div class="game-badge">LE BLUFF</div>
+  <div class="narrative-box">
+    <p><strong>Bienvenue dans l'épreuve du Bluff !</strong></p>
+    <p>Le but : finir en possession de la <strong>photo d'Antoine</strong>.</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>7</strong> et prenez chacun votre enveloppe. Ne l'ouvrez pas encore !</p>
+    <p>🔵 <strong>Équipe Karlach :</strong> ouvrez votre enveloppe en secret. La photo est-elle là... ou pas ? <strong>NE DITES RIEN !</strong></p>
+    <p>Désignez ensuite UN porte-parole. Son rôle : convaincre l'équipe Ombrecoeur d'échanger — ou non — leur enveloppe contre la vôtre.</p>
+    <p>L'équipe qui finit avec la photo d'Antoine remporte <strong>10 points</strong>.</p>
+    <p>Alors... savez-vous bien mentir ? 😏</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-21','ombrecoeur',5)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 21 — Munchkin #2
+=================================================== -->
+<div class="screen theme-munchkin" id="screen-21">
+  <div class="screen-icon">⚔️</div>
+  <div class="game-badge">MUNCHKIN</div>
+  <div class="narrative-box">
+    <p>Il est temps de <strong>frapper à la porte du donjon !</strong></p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>2</strong> et prenez le paquet de cartes Munchkin.</p>
+    <p>En commençant par l'équipe qui a atterri sur cette case, chacune frappe à son tour.</p>
+    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot ! L'effet s'inverse.</span></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-23','karlach',3)">Effets appliqués ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 23 — Inkfart #2
+=================================================== -->
+<div class="screen theme-inkfart" id="screen-23">
+  <div class="screen-icon">🃏</div>
+  <div class="game-badge">INKFART</div>
+  <div class="narrative-box">
+    <p><strong>Encore vous...</strong></p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche (tiroir <strong>3</strong>) et étalez-les face visible.</p>
+    <p>En commençant par l'équipe <strong>Karlach</strong>, choisissez une carte à tour de rôle.</p>
+    <p>La 5ème carte restante retourne dans la pioche. Appliquez les effets.</p>
+  </div>
+  <button class="btn" onclick="goTo('screen-23b')">ICI ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 23b — Scott Pilgrim #3
+=================================================== -->
+<div class="screen theme-scott" id="screen-23b">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p>ANTOINE ! Un autre <strong>démon surgit des ténèbres</strong>.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">TROISIÈME ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">AYMERIC</div>
+    <div class="fight-badge">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-23b"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Another Winter — Anamanaguchi</div>
+  <div class="btn-row" id="scott3-btn">
+    <button class="btn" onclick="rollDice('screen-25','ombrecoeur',3)">Passer →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 25 — Étoile
+=================================================== -->
+<div class="screen theme-intro" id="screen-25">
+  <div class="star-burst">⭐</div>
+  <h1 style="color:var(--accent-yellow);">ÉTOILE !</h1>
+  <div class="narrative-box">
+    <p><strong>Bravo équipe Ombrecoeur !</strong></p>
+    <p>Votre prochain malus est annulé — quelle qu'en soit la source.</p>
+    <p>Conservez cette information précieusement… vous en aurez besoin. 😄</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-27','karlach',2)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 27 — LOL #2
+=================================================== -->
+<div class="screen theme-lol" id="screen-27">
+  <div class="screen-icon">🎮</div>
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p>Une question va vous être posée. Chaque équipe a le droit à <strong>UNE réponse</strong>.</p>
+    <p>Écrivez votre réponse sur un téléphone et dévoilez-la après le compte à rebours.</p>
+    <p>La question est volontairement très difficile — l'idée est d'être <strong>l'équipe la plus proche</strong>.</p>
+  </div>
+  <button class="btn" onclick="goTo('screen-27b')">OUI, ON EST PRÊTS 👍</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 27b — LOL #2 Question
+=================================================== -->
+<div class="screen theme-lol" id="screen-27b">
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p>Dans LOL, certains champions ont beaucoup de skins.</p>
+    <p style="font-size:1.15em; color:var(--accent-blue); font-weight:700;">À votre avis, quel est le nombre de skins le plus élevé ?</p>
+    <p><em>Bonus — 2 points supplémentaires : qui sont les deux champions avec le plus de skins ?</em></p>
+    <p>Vous avez <strong>30 secondes</strong>. Décidez et dévoilez votre réponse !</p>
+  </div>
+  <div class="chrono-display" id="chrono-27b">00:30</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-27b', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn" onclick="goTo('screen-27c')">Révéler la réponse 👀</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 27c — LOL #2 Révélation
+=================================================== -->
+<div class="screen theme-lol" id="screen-27c">
+  <div class="screen-icon">💡</div>
+  <div class="narrative-box">
+    <p>La bonne réponse était... <strong style="font-size:1.4em;color:var(--accent-blue);">22 skins !</strong></p>
+    <p>Les deux champions avec le plus de skins sont <strong>Lux</strong> et <strong>Miss Fortune</strong>.</p>
+    <p>2 points pour l'équipe la plus proche de 22.<br>2 points bonus pour l'équipe qui a trouvé les champions.</p>
+    <p><em>En cas d'égalité, les deux équipes marquent les points.</em></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-29','ombrecoeur',2)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 29 — Bâtons #1
+=================================================== -->
+<div class="screen theme-neutre" id="screen-29">
+  <div class="screen-icon">🥢</div>
+  <div class="game-badge">BÂTONS</div>
+  <div class="narrative-box">
+    <p>🗄️ Ouvrez le tiroir numéro <strong>6</strong> et récupérez les <strong>18 bâtonnets</strong>.</p>
+    <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, retirez <strong>1, 2 ou 3 bâtonnets</strong> à tour de rôle.</p>
+    <p>Le but est simple : <strong>NE PAS</strong> se retrouver avec le dernier bâtonnet.</p>
+    <p>L'équipe qui prend le dernier bâtonnet a <strong>PERDU</strong>.</p>
+    <p>L'équipe gagnante remporte <strong>4 points</strong>.</p>
+    <p><em>…J'espère que vous comptez les points assidûment !</em></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-31','karlach',1)">Épreuve terminée ! 🏁</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 31 — Dead of Winter #2
+=================================================== -->
+<div class="screen theme-dow" id="screen-31">
+  <div class="dow-atmosphere"></div>
+  <div class="screen-icon">🧟</div>
+  <div class="game-badge">DEAD OF WINTER</div>
+  <div class="narrative-box">
+    <p><strong>À votre tour maintenant !</strong></p>
+    <p>🗄️ <strong>Équipe Karlach</strong> — ouvrez le tiroir numéro <strong>4</strong> et distribuez-vous les cartes en secret. Une par personne.</p>
+    <p>Parmi ces cartes, il y a <strong>PEUT-ÊTRE</strong> un traître.</p>
+    <p>Si c'est le cas, cette personne devra tout faire pour <strong>saboter son équipe</strong> sans se faire griller.</p>
+    <p>Les autres — <strong>observez, suspectez, démasquez</strong>.</p>
+    <p>Le doute est maintenant installé dans <strong>les deux équipes</strong>. Bonne chance… ou pas. 😈</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-33','ombrecoeur',6)">Cartes distribuées ! 🃏</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 33 — Koh Lanta #3 Cerceau
+=================================================== -->
+<div class="screen theme-kohlanta" id="screen-33">
+  <div class="screen-icon">⭕</div>
+  <div class="game-badge">KOH LANTA — LE CERCEAU</div>
+  <div class="narrative-box">
+    <p><strong>Aventuriers !</strong></p>
+    <p>Rendez-vous <strong>dehors</strong> — deux cerceaux vous y attendent, un par équipe.</p>
+    <p><strong>3 participants</strong> par équipe. Les 2 restants sont Maîtres du Jeu.</p>
+    <p>La règle : faire faire au cerceau <strong>3 tours complets</strong> autour de votre équipe, le plus rapidement possible.</p>
+    <p><span class="warn">⚠️ Vous devez vous tenir les mains en permanence. Si vous les lâchez, on recommence !</span></p>
+    <p>Maîtres du Jeu : <strong>lancez le chrono !</strong> GO !</p>
+    <p>L'équipe la plus rapide remporte <strong>2 points</strong>.</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-35','karlach',2)">Épreuve terminée ! 🏁</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 35 — Munchkin #3
+=================================================== -->
+<div class="screen theme-munchkin" id="screen-35">
+  <div class="screen-icon">⚔️</div>
+  <div class="game-badge">MUNCHKIN</div>
+  <div class="narrative-box">
+    <p>Il est temps de <strong>frapper à la porte du donjon !</strong></p>
+    <p>🗄️ Prenez le paquet de cartes Munchkin dans le tiroir numéro <strong>2</strong>.</p>
+    <p>En commençant par l'équipe <strong>Karlach</strong>, chacune frappe à son tour.</p>
+    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot ! L'effet s'inverse.</span></p>
+  </div>
+  <button class="btn" onclick="goTo('screen-35b')">Effets appliqués ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 35b — Scott Pilgrim #4
+=================================================== -->
+<div class="screen theme-scott" id="screen-35b">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p>ANTOINE ! Un <strong>nouveau défi</strong> t'attend.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">QUATRIÈME ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">MAXIME</div>
+    <div class="fight-badge">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-35b"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Rock Club — Anamanaguchi</div>
+  <div class="btn-row" id="scott4-btn">
+    <button class="btn" onclick="rollDice('screen-36','ombrecoeur',4)">Passer →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 36b — Champi
+=================================================== -->
+<div class="screen theme-neutre" id="screen-36b">
+  <div class="screen-icon">🍄</div>
+  <h1 style="color:#57cc99;">CHAMPI !</h1>
+  <div class="narrative-box" style="text-align:center;">
+    <p>C'est reparti : <strong>vous relancez les dés !</strong></p>
+  </div>
+  <!-- Auto-transition after 2s -->
+</div>
+
+<!-- ===================================================
+  ÉCRAN 37 — Escape Game
+=================================================== -->
+<div class="screen theme-escape" id="screen-37">
+  <div class="screen-icon">🔐</div>
+  <div class="game-badge">ESCAPE GAME</div>
+  <div class="narrative-box">
+    <p>Cette malle est arrivée accompagnée de <strong>2 coffrets</strong> — un par équipe.</p>
+    <p>À l'intérieur de chaque coffret se trouve un <strong>bonus</strong>.</p>
+    <p>Les deux équipes jouent <strong>en simultané</strong>. Vous avez <strong>5 minutes</strong> pour ouvrir votre coffret.</p>
+    <p>🗄️ Les instructions se trouvent dans le tiroir <strong>8</strong>.</p>
+    <p>La première équipe qui réussit remporte son bonus. L'autre repart bredouille.</p>
+    <p><span class="warn">⚠️ Si aucune équipe n'a réussi dans le temps imparti : -4 points pour tout le monde.</span></p>
+    <p><strong>Bonne chance… vous en aurez besoin. ⏱️</strong></p>
+  </div>
+  <div class="chrono-display" id="chrono-37">05:00</div>
+  <div class="btn-row">
+    <button class="btn" onclick="startChrono('chrono-37', 300, 'screen-37b')">Lancer le chrono ! ⏱️</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 37b — Fin Escape Game
+=================================================== -->
+<div class="screen theme-escape" id="screen-37b">
+  <div class="screen-icon">⏱️</div>
+  <h2>LE TEMPS EST ÉCOULÉ !</h2>
+  <div class="narrative-box">
+    <p>Appliquez les résultats :</p>
+    <p>🥇 Première équipe à avoir ouvert son coffret : remporte le bonus</p>
+    <p>🥈 Deuxième équipe : repart bredouille</p>
+    <p><span class="warn">⚠️ Aucune équipe n'a réussi : -4 points chacune</span></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-39','karlach',3)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 39 — Koh Lanta #4 Potos
+=================================================== -->
+<div class="screen theme-kohlanta" id="screen-39">
+  <div class="screen-icon">💪</div>
+  <div class="game-badge">KOH LANTA — L'ÉPREUVE DES POTOS</div>
+  <div class="narrative-box">
+    <p><strong>Aventuriers, une autre épreuve MYTHIQUE vous attend !</strong></p>
+    <p>L'épreuve des Potos. Et oui, c'est bien écrit.</p>
+    <p>Dans chaque équipe, <strong>2 potes</strong> se portent volontaires. Constituez vos duos.</p>
+    <p><strong>PRÊTS ?</strong></p>
+    <p>Dans chaque duo : un <strong>porteur</strong> et un <strong>porté</strong>.</p>
+    <p>Le porteur fait la courte échelle au porté. Le duo qui tient le plus longtemps gagne.</p>
+    <p><em>Si au bout de plusieurs longues minutes personne n'a cédé... ajoutez du piment : les porteurs marchent !</em></p>
+    <p>Le duo encore debout remporte <strong>6 points</strong> pour son équipe. 💪</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-41','ombrecoeur',4)">Épreuve terminée ! 🏁</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 41 — Dead of Winter #3 Le Vote
+=================================================== -->
+<div class="screen theme-dow" id="screen-41">
+  <div class="dow-atmosphere"></div>
+  <div class="screen-icon">🗳️</div>
+  <div class="game-badge">DEAD OF WINTER — LE VOTE</div>
+  <div class="narrative-box">
+    <p>Maintenant que les deux équipes ont des traîtres parmi elles… ou pas.</p>
+    <p>Il est temps de prendre une <strong>décision</strong>.</p>
+    <p>Chaque équipe a <strong>3 minutes</strong> pour se concerter et décider si elle souhaite <strong>exclure l'un de ses membres</strong>.</p>
+    <p><span class="warn">⚠️ Les traîtres — si il y en a — doivent agir en conséquence.</span></p>
+    <p>Mais gardez le secret de votre identité jusqu'à la fin.</p>
+    <p><strong>Le compte à rebours commence maintenant. 🕐</strong></p>
+  </div>
+  <div class="chrono-display" id="chrono-41">03:00</div>
+  <div id="btn-41-start" class="btn-row">
+    <button class="btn" onclick="startChrono('chrono-41', 180, null); document.getElementById('btn-41-start').style.display='none';">Lancer le chrono ! ⏱️</button>
+  </div>
+  <div class="btn-row" id="btn-41-next" style="display:none">
+    <button class="btn" onclick="goTo('screen-41b')">Décision Prise ! 🗳️</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 41b — Scott Pilgrim #5
+=================================================== -->
+<div class="screen theme-scott" id="screen-41b">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p>ANTOINE ! Un <strong>nouvel ennemi</strong> se dresse devant toi.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">CINQUIÈME ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">JASON</div>
+    <div class="fight-badge">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-41b"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Skullcrusher Mountain — Jonathan Coulton</div>
+  <div class="btn-row" id="scott5-btn">
+    <button class="btn" onclick="rollDice('screen-43','karlach',2)">Passer →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 43 — Pokémon Molky
+=================================================== -->
+<div class="screen theme-pokemon" id="screen-43">
+  <div class="screen-icon">🎯</div>
+  <div class="game-badge">POKÉMON — LE MOLKY</div>
+  <div class="narrative-box">
+    <p><strong>Sortez le Molky !!</strong></p>
+    <p>Placez les quilles numérotées en ligne : <strong>2, 3, 4, 5, 6, 7, 10, 12</strong>.</p>
+    <p>À tour de rôle, tentez d'éliminer une quille.</p>
+    <p>— Si vous ratez : vous êtes éliminés.<br>— Si vous ratez votre deuxième quille : vous êtes éliminés mais conservez la première quille que vous avez fait tomber.</p>
+    <p>Lorsque toutes les quilles ont été éliminées, appuyez ici 👇</p>
+  </div>
+  <button class="btn" onclick="goTo('screen-43b')">POKÉBALL ! ⚪</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 43b — Pokémon Révélation
+=================================================== -->
+<div class="screen theme-pokemon" id="screen-43b">
+  <div class="pokeball" onclick="animatePokeball(this)">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" fill="#e63946" stroke="#222" stroke-width="3"/>
+      <rect x="2" y="47" width="96" height="6" fill="#222"/>
+      <circle cx="50" cy="50" r="14" fill="#fff" stroke="#222" stroke-width="3"/>
+      <circle cx="50" cy="50" r="7" fill="#e63946" stroke="#222" stroke-width="2"/>
+      <path d="M2 50 A48 48 0 0 1 98 50" fill="#f0f0f0" stroke="none"/>
+    </svg>
+  </div>
+  <div class="narrative-box">
+    <p>Félicitations au joueur qui a remporté la <strong>quille numéro 7</strong> !</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>5</strong> — à l'intérieur vous trouverez une paire de lunettes très spéciale...</p>
+    <p>🕶️ Ces lunettes sont un <strong>super bonus</strong> : leur porteur gagne automatiquement <strong>2 points supplémentaires</strong> à chaque épreuve à laquelle il participe.</p>
+    <p><strong>Carapuce approuve. 👍</strong></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-45','ombrecoeur',4)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 45 — Photo
+=================================================== -->
+<div class="screen theme-photo" id="screen-45">
+  <div class="screen-icon">📸</div>
+  <div class="game-badge">SÉANCE PHOTO</div>
+  <div class="narrative-box">
+    <p>L'art de passer inaperçu en toutes situations est une qualité très importante chez les agents secrets. Mais vous n'en êtes pas… donc on va juste faire ça pour rigoler.</p>
+    <p>Vous avez <strong>5 minutes par round</strong> pour trouver tout ce qui vous tombe sous la main et incarner parfaitement votre rôle.</p>
+    <p style="color:var(--accent-blue); font-weight:700;">Round 1 : SURVIVANTS DE KOH LANTA</p>
+    <p>40 jours sur une île, pas de douche, pas de confort. Mais vous tenez encore debout. À peine.</p>
+    <p>Tenue, pose, regard de naufragé... <strong>GO !</strong></p>
+  </div>
+  <div class="chrono-display" id="chrono-45a">05:00</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-45a', 300, null)">⏱ Lancer Round 1</button>
+    <button class="btn" onclick="goTo('screen-45b')">Photo prise ! 📸</button>
+  </div>
+</div>
+
+<div class="screen theme-photo" id="screen-45b">
+  <div class="screen-icon">🕵️</div>
+  <div class="narrative-box">
+    <p style="color:var(--accent-blue); font-weight:700;">Round 2 : AGENTS SECRETS EN MISSION</p>
+    <p>Vous venez d'infiltrer la base ennemie. Vous êtes classe, dangereux, imperturbables.</p>
+    <p>Tenue, pose, regard de tueur... <strong>GO !</strong></p>
+  </div>
+  <div class="chrono-display" id="chrono-45b">05:00</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-45b', 300, null)">⏱ Lancer Round 2</button>
+    <button class="btn" onclick="goTo('screen-45c')">Photo prise ! 📸</button>
+  </div>
+</div>
+
+<div class="screen theme-photo" id="screen-45c">
+  <div class="screen-icon">🏆</div>
+  <div class="narrative-box">
+    <p style="color:var(--accent-blue); font-weight:700;">Round 3 : SUPPORTERS DÉCHAÎNÉS</p>
+    <p>Antoine vient de marquer le but de la victoire en finale. Vous êtes dans les tribunes. C'est historique.</p>
+    <p>Tenue, pose, larmes de joie... <strong>GO !</strong></p>
+  </div>
+  <div class="chrono-display" id="chrono-45c">05:00</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-45c', 300, null)">⏱ Lancer Round 3</button>
+    <button class="btn" onclick="goTo('screen-45d')">Photo prise ! 📸</button>
+  </div>
+</div>
+
+<div class="screen theme-photo" id="screen-45d">
+  <div class="screen-icon">🎞️</div>
+  <div class="narrative-box" style="text-align:center;">
+    <p><strong>Magnifique. Vraiment.</strong></p>
+    <p>Mais on va être honnêtes — ces photos, c'est juste pour qu'Antoine se souvienne toute sa vie de la tête que vous avez faite aujourd'hui. 📸</p>
+    <p><em>Beau souvenir garanti.</em></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-47','karlach',5)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 47 — Inkfart #3
+=================================================== -->
+<div class="screen theme-inkfart" id="screen-47">
+  <div class="screen-icon">🃏</div>
+  <div class="game-badge">INKFART</div>
+  <div class="narrative-box">
+    <p><strong>Encore...</strong></p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche et étalez-les face visible.</p>
+    <p>En commençant par l'équipe <strong>Karlach</strong>, choisissez une carte à tour de rôle.</p>
+    <p>Appliquez les effets et conservez vos cartes devant vous.</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-49','ombrecoeur',1)">Cartes appliquées ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 49 — Munchkin #4
+=================================================== -->
+<div class="screen theme-munchkin" id="screen-49">
+  <div class="screen-icon">⚔️</div>
+  <div class="game-badge">MUNCHKIN</div>
+  <div class="narrative-box">
+    <p>Il est temps de <strong>frapper à la porte du donjon !</strong></p>
+    <p>🗄️ Prenez le paquet de cartes Munchkin dans le tiroir numéro <strong>2</strong>.</p>
+    <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, chacune frappe à son tour.</p>
+    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot !</span></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-51','karlach',6)">Effets appliqués ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 51 — Banane
+=================================================== -->
+<div class="screen theme-neutre" id="screen-51">
+  <div class="screen-icon">🍌</div>
+  <h1 style="color:#f7c948;">GLISSADE !</h1>
+  <div class="narrative-box">
+    <p>Vous avez marché sur une banane...</p>
+    <p>L'équipe <strong>Ombrecoeur</strong> choisit UN membre de l'équipe <strong>Karlach</strong> qui devra effectuer la prochaine épreuve physique les yeux bandés, guidé uniquement par la voix de ses coéquipiers.</p>
+    <p>Choisissez bien… 😈</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-53','ombrecoeur',5)">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 53 — Bâtons #2
+=================================================== -->
+<div class="screen theme-neutre" id="screen-53">
+  <div class="screen-icon">🥢</div>
+  <div class="game-badge">BÂTONS</div>
+  <div class="narrative-box">
+    <p><strong>On remet ça !</strong></p>
+    <p>🗄️ Récupérez les bâtonnets dans le tiroir numéro <strong>6</strong> et remettez-les en place.</p>
+    <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, retirez <strong>1, 2 ou 3 bâtonnets</strong> à tour de rôle.</p>
+    <p>Le but est simple : <strong>NE PAS</strong> se retrouver avec le dernier bâtonnet.</p>
+    <p>L'équipe gagnante remporte <strong>4 points</strong>. 😏</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-55','karlach',1)">Épreuve terminée ! 🏁</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 55 — LOL #3
+=================================================== -->
+<div class="screen theme-lol" id="screen-55">
+  <div class="screen-icon">🎮</div>
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p>Une question va vous être posée. Chaque équipe a le droit à <strong>UNE réponse</strong>.</p>
+    <p>Écrivez votre réponse sur un téléphone et dévoilez-la après le compte à rebours.</p>
+    <p>La question est volontairement très difficile — l'idée est d'être <strong>l'équipe la plus proche</strong>.</p>
+  </div>
+  <button class="btn" onclick="goTo('screen-55b')">OUI, ON EST PRÊTS 👍</button>
+</div>
+
+<div class="screen theme-lol" id="screen-55b">
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p style="font-size:1.1em; color:var(--accent-blue); font-weight:700;">Depuis le début des compétitions internationales, quel est le pourcentage d'équipes européennes qui ont atteint le top 4 ?</p>
+  </div>
+  <div class="chrono-display" id="chrono-55b">00:30</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-55b', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn" onclick="goTo('screen-55c')">Révéler la réponse 👀</button>
+  </div>
+</div>
+
+<div class="screen theme-lol" id="screen-55c">
+  <div class="screen-icon">💡</div>
+  <div class="narrative-box">
+    <p>La bonne réponse était... <strong style="font-size:1.4em;color:var(--accent-blue);">25% !</strong></p>
+    <p>2 points pour l'équipe la plus proche.<br><em>En cas d'égalité, les deux équipes marquent les points.</em></p>
+  </div>
+  <button class="btn" onclick="goTo('screen-55d')">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 55d — Scott Pilgrim #6
+=================================================== -->
+<div class="screen theme-scott" id="screen-55d">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p>ANTOINE ! Un autre <strong>démon surgit des ténèbres</strong>.</p>
+    <p>🗄️ Les règles sont dans le tiroir numéro <strong>X</strong>, enveloppe SCOTT PILGRIM.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">SIXIÈME ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">ACHILLE</div>
+    <div class="fight-badge">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-55d"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Last Song — Anamanaguchi</div>
+  <div class="btn-row" id="scott6-btn">
+    <button class="btn" onclick="rollDice('screen-57','ombrecoeur',1)">Passer →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 57 — Inkfart #4
+=================================================== -->
+<div class="screen theme-inkfart" id="screen-57">
+  <div class="screen-icon">🃏</div>
+  <div class="game-badge">INKFART</div>
+  <div class="narrative-box">
+    <p><strong>Encore vous...</strong></p>
+    <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> de la pioche et étalez-les face visible.</p>
+    <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, choisissez une carte à tour de rôle.</p>
+    <p>Appliquez les effets et conservez vos cartes devant vous.</p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-59','karlach',3)">Cartes appliquées ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 59 — Munchkin #5
+=================================================== -->
+<div class="screen theme-munchkin" id="screen-59">
+  <div class="screen-icon">⚔️</div>
+  <div class="game-badge">MUNCHKIN — DERNIÈRE PORTE</div>
+  <div class="narrative-box">
+    <p><strong>Dernière porte du donjon !</strong></p>
+    <p>🗄️ Prenez le paquet de cartes Munchkin dans le tiroir numéro <strong>2</strong>.</p>
+    <p>En commençant par l'équipe <strong>Karlach</strong>, chacune frappe à son tour.</p>
+    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot ! L'effet s'inverse.</span></p>
+  </div>
+  <button class="btn" onclick="rollDice('screen-61','ombrecoeur',2)">Effets appliqués ! ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 61 — LOL #4
+=================================================== -->
+<div class="screen theme-lol" id="screen-61">
+  <div class="screen-icon">🎮</div>
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p>Dernière question LoL ! Chaque équipe a le droit à <strong>UNE réponse</strong>.</p>
+  </div>
+  <button class="btn" onclick="goTo('screen-61b')">OUI, ON EST PRÊTS 👍</button>
+</div>
+
+<div class="screen theme-lol" id="screen-61b">
+  <div class="game-badge">LEAGUE OF LEGENDS</div>
+  <div class="narrative-box">
+    <p style="font-size:1.1em; color:var(--accent-blue); font-weight:700;">Combien y a-t-il eu de games jouées dans le monde en 2025 ?</p>
+  </div>
+  <div class="chrono-display" id="chrono-61b">00:30</div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-61b', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn" onclick="goTo('screen-61c')">Révéler la réponse 👀</button>
+  </div>
+</div>
+
+<div class="screen theme-lol" id="screen-61c">
+  <div class="screen-icon">💡</div>
+  <div class="narrative-box">
+    <p>La bonne réponse était... <strong style="font-size:1.4em;color:var(--accent-blue);">924 millions de games !</strong></p>
+    <p>🏆 2 points pour l'équipe la plus proche.<br><em>En cas d'égalité, les deux équipes marquent les points.</em></p>
+  </div>
+  <button class="btn" onclick="goTo('screen-62')">Continuer →</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 62 — Scott Pilgrim #7 Final
+=================================================== -->
+<div class="screen theme-scott" id="screen-62">
+  <div class="vs-text">— SCOTT PILGRIM VS THE WORLD —</div>
+  <div style="font-family:var(--font-title); font-size:12px; color:var(--accent-yellow); letter-spacing:2px; text-align:center;">★ BOSS FINAL ★</div>
+  <div class="screen-icon">🥊</div>
+  <div class="narrative-box">
+    <p><strong>ANTOINE !</strong></p>
+    <p>Tu y es presque...</p>
+    <p>Dernier adversaire. Le septième. Le boss final.</p>
+    <p>🗄️ Les règles sont dans le tiroir numéro <strong>X</strong>, enveloppe SCOTT PILGRIM.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">SEPTIÈME ADVERSAIRE</div>
+    <div style="font-family:var(--font-display); font-size:64px; color:var(--accent-green); text-shadow:0 0 30px rgba(87,204,153,0.8);">FABIEN</div>
+    <div class="fight-badge" style="font-size:clamp(20px,4vw,40px);">FIGHT ! 🥊</div>
+  </div>
+  <div class="music-progress"><div class="music-bar" id="music-62"></div></div>
+  <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Burial — Anamanaguchi</div>
+  <div class="btn-row" id="scott7-btn">
+    <button class="btn" onclick="goTo('screen-63')">Passer →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 63 — FIN DE PARTIE
+=================================================== -->
+<div class="screen theme-fin" id="screen-63">
+  <div class="screen-icon">🎉</div>
+  <h1 style="color:var(--accent-yellow); text-shadow:0 0 30px rgba(247,201,72,0.6);">FIN DE PARTIE !</h1>
+  <div class="narrative-box" style="text-align:center;">
+    <p>Et voilà. C'est terminé.</p>
+    <p>Vous avez <strong>survécu à l'univers d'Antoine</strong>. Ou presque.</p>
+    <p>Il est maintenant temps de <strong>compter les points</strong>.</p>
+    <p>Chaque équipe additionne ses points.</p>
+    <p><em>Vous avez vos totaux ?</em></p>
+  </div>
+  <button class="btn" onclick="goTo('screen-63b')">OUI, ON A NOS TOTAUX ✅</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 63b — Les traîtres
+=================================================== -->
+<div class="screen theme-dow" id="screen-63b">
+  <div class="dow-atmosphere"></div>
+  <div class="screen-icon">🎭</div>
+  <h2 style="color:var(--accent-purple);">AVANT DE RÉVÉLER...</h2>
+  <div class="narrative-box" style="text-align:center;">
+    <p>Il est temps de <strong>lever le voile sur les traîtres</strong>.</p>
+    <p>Équipe Ombrecoeur — le traître parmi vous <strong>se lève</strong>.<br>Équipe Karlach — le traître parmi vous <strong>se lève</strong>.</p>
+    <p>On applaudit. Ou on hue. C'est selon. 👀</p>
+  </div>
+  <button class="btn" onclick="goTo('screen-63c')">LES TRAÎTRES SONT DÉMASQUÉS 🎭</button>
+</div>
+
+<!-- ===================================================
+  ÉCRAN 63c — Le twist final
+=================================================== -->
+<div class="screen theme-fin" id="screen-63c">
+  <div id="confetti-container"></div>
+  <div class="screen-icon">💍</div>
+  <h1 style="color:var(--accent-yellow); font-size:clamp(28px,5vw,56px); text-shadow:0 0 30px rgba(247,201,72,0.7);">LE SECRET DU JEU</h1>
+  <div class="narrative-box" style="text-align:center;">
+    <p>Maintenant que vous avez compté vos points et démasqué vos traîtres...</p>
+    <p>On va vous dire <strong>comment on gagne vraiment</strong> à ce jeu.</p>
+    <p>Pour gagner, il suffisait d'avoir <strong>Antoine dans son équipe</strong>.</p>
+    <p>C'était ça le secret depuis le début.</p>
+    <p style="font-size:1.2em; font-weight:700; color:var(--accent-yellow);">L'équipe d'Antoine a gagné. Peu importe les points.</p>
+    <p>Parce qu'Antoine, c'est le trésor ! 💍</p>
+    <hr style="border-color:rgba(247,201,72,0.3); margin:16px 0;">
+    <p style="font-size:1.1em;"><strong>Bonne fête à vous tous.</strong><br>Et félicitations pour le mariage ! 🎊</p>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ===================================================
+  JAVASCRIPT
+=================================================== -->
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+let currentScreen = null;
+let chronoInterval = null;
+let diceCallback = null;
+let musicInterval = null;
+
+const screenOrder = [
+  'screen-01','screen-equipes','screen-06','screen-08','screen-08b',
+  'screen-10','screen-11','screen-13','screen-15','screen-17','screen-17b',
+  'screen-19','screen-21','screen-23','screen-23b','screen-25',
+  'screen-27','screen-27b','screen-27c','screen-29','screen-31',
+  'screen-33','screen-35','screen-35b','screen-36b',
+  'screen-37','screen-37b','screen-39','screen-41','screen-41b',
+  'screen-43','screen-43b','screen-45','screen-45b','screen-45c','screen-45d',
+  'screen-47','screen-49','screen-51','screen-53',
+  'screen-55','screen-55b','screen-55c','screen-55d',
+  'screen-57','screen-59','screen-61','screen-61b','screen-61c',
+  'screen-62','screen-63','screen-63b','screen-63c'
+];
+
+// ============================================================
+//  AUDIO
+// ============================================================
+const audioCache = {};
+
+function playAudio(src, loop = false) {
+  if (!src) return null;
+  if (!audioCache[src]) {
+    audioCache[src] = new Audio(src);
+    audioCache[src].preload = 'auto';
+  }
+  const a = audioCache[src];
+  a.loop = loop;
+  a.currentTime = 0;
+  a.play().catch(() => {});
+  setAudioStatus('▶ ' + src);
+  return a;
+}
+
+function stopAllAudio() {
+  Object.values(audioCache).forEach(a => { a.pause(); a.currentTime = 0; });
+  setAudioStatus('—');
+}
+
+function setAudioStatus(txt) {
+  const el = document.getElementById('audioStatusText');
+  if (el) el.textContent = txt;
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function goTo(id) {
+  stopAllAudio();
+  stopChrono();
+
+  if (currentScreen) {
+    document.getElementById(currentScreen).classList.remove('active');
+  }
+  currentScreen = id;
+  const el = document.getElementById(id);
+  if (!el) { console.warn('Screen not found:', id); return; }
+  el.classList.add('active');
+  el.scrollTop = 0;
+
+  localStorage.setItem('evg_screen', id);
+
+  updateProgress(id);
+  onScreenEnter(id);
+}
+
+function updateProgress(id) {
+  const idx = screenOrder.indexOf(id);
+  const pct = idx < 0 ? 0 : Math.round((idx / (screenOrder.length - 1)) * 100);
+}
+
+// ============================================================
+//  SCREEN ENTER HOOKS
+// ============================================================
+function onScreenEnter(id) {
+  switch(id) {
+    case 'screen-01':  initScreen01(); break;
+    case 'screen-11':  startMusicProgress('music-11', 90, 'scott1-btn', null); playAudio('audio/threshold.mp3'); break;
+    case 'screen-17b': startMusicProgress('music-17b', 90, 'scott2-btn', null); playAudio('audio/nippon_ichi.mp3'); break;
+    case 'screen-23b': startMusicProgress('music-23b', 90, 'scott3-btn', null); playAudio('audio/another_winter.mp3'); break;
+    case 'screen-35b': startMusicProgress('music-35b', 90, 'scott4-btn', null); playAudio('audio/rock_club.mp3'); break;
+    case 'screen-41b': startMusicProgress('music-41b', 90, 'scott5-btn', null); playAudio('audio/skullcrusher.mp3'); break;
+    case 'screen-55d': startMusicProgress('music-55d', 90, 'scott6-btn', null); playAudio('audio/last_song.mp3'); break;
+    case 'screen-62':  startMusicProgress('music-62', 90, 'scott7-btn', null); playAudio('audio/burial.mp3'); break;
+    case 'screen-17':  playAudio('audio/dow_ambiance.mp3', true); break;
+    case 'screen-31':  playAudio('audio/dow_ambiance.mp3', true); break;
+    case 'screen-41':  
+      playAudio('audio/dow_ambiance.mp3', true);
+      // Show next button after chrono ends (handled in startChrono)
+      break;
+    case 'screen-63c': launchConfetti(); break;
+    case 'screen-36b': 
+      // Champi — auto transition après 2s
+      setTimeout(() => rollDice('screen-37','ombrecoeur',4), 2000);
+      break;
+  }
+}
+
+// ============================================================
+//  SCREEN 01 — INTRO SEQUENCE
+// ============================================================
+function initScreen01() {
+  const gif    = document.getElementById('gif-brognart');
+  const text2  = document.getElementById('intro-text-2');
+  const btnRow = document.getElementById('intro-btn-row');
+
+  function showGif() {
+    gif.classList.add('visible');
+    const brognart = playAudio('audio/brognart_son.mp3');
+    if (brognart) {
+      brognart.addEventListener('ended', showText2);
+    } else {
+      setTimeout(showText2, 3000);
+    }
+  }
+
+  function showText2() {
+    text2.style.display = 'block';
+    text2.style.animation = 'screenIn 0.5s ease forwards';
+    const narr2 = playAudio('audio/narration_01b.mp3');
+    if (narr2) {
+      narr2.addEventListener('ended', showBtn);
+    } else {
+      setTimeout(showBtn, 4000);
+    }
+  }
+
+  function showBtn() {
+    btnRow.style.display = 'flex';
+  }
+
+  // Tenter la narration audio
+  const narr1 = playAudio('audio/narration_01a.mp3');
+  if (narr1) {
+    narr1.addEventListener('ended', showGif);
+  } else {
+    setTimeout(showGif, 4000);
+  }
+
+  // --- BOUTON SKIP (DEV) ---
+  // Cliquer n'importe où sur l'écran 01 avance à l'étape suivante
+  // À retirer pour la prod, ou laisser : en prod les audios gèrent la séquence
+  const screen01 = document.getElementById('screen-01');
+  let step = 0;
+  screen01.addEventListener('click', (e) => {
+    // Ne pas intercepter les clics sur le bouton principal
+    if (e.target.classList.contains('btn')) return;
+    step++;
+    if (step === 1) showGif();
+    else if (step === 2) showText2();
+    else if (step >= 3) showBtn();
+  });
+}
+
+// ============================================================
+//  DÉ
+// ============================================================
+function rollDice(nextScreen, team, result) {
+  // Store callback
+  diceCallback = { nextScreen, result };
+  
+  // Set team label
+  const label = document.getElementById('diceTeamLabel');
+  label.textContent = team === 'ombrecoeur' ? '⚔️ OMBRECOEUR lance le dé' : '🔵 KARLACH lance le dé';
+  label.className = 'dice-team-label ' + team;
+
+  // Reset result
+  const resultEl = document.getElementById('diceResult');
+  resultEl.classList.remove('visible');
+  resultEl.textContent = '';
+
+  goTo('screen-dice');
+
+  // Start animation
+  const dice = document.getElementById('diceEl');
+  dice.classList.remove('rolling');
+  void dice.offsetWidth; // reflow
+  dice.classList.add('rolling');
+
+  // Show result after animation
+  setTimeout(() => {
+    dice.classList.remove('rolling');
+    resultEl.textContent = result;
+    resultEl.classList.add('visible');
+
+    // Auto-navigate after 1.5s
+    setTimeout(() => {
+      if (diceCallback) {
+        goTo(diceCallback.nextScreen);
+        diceCallback = null;
+      }
+    }, 1500);
+  }, 1300);
+}
+
+// ============================================================
+//  CHRONO
+// ============================================================
+function startChrono(elId, seconds, onEndScreen) {
+  stopChrono();
+  let remaining = seconds;
+  const el = document.getElementById(elId);
+  if (!el) return;
+
+  updateChronoDisplay(el, remaining);
+
+  chronoInterval = setInterval(() => {
+    remaining--;
+    updateChronoDisplay(el, remaining);
+
+    if (remaining <= 10) {
+      el.classList.add('urgent');
+    }
+
+    if (remaining <= 0) {
+      stopChrono();
+      playAudio('audio/chrono_end.mp3');
+      el.classList.remove('urgent');
+      el.textContent = '⏰ TEMPS !';
+
+      // Show "next" button for screen-41
+      if (elId === 'chrono-41') {
+        document.getElementById('btn-41-next').style.display = 'flex';
+      }
+
+      if (onEndScreen) {
+        setTimeout(() => goTo(onEndScreen), 1500);
+      }
+    }
+  }, 1000);
+}
+
+function stopChrono() {
+  if (chronoInterval) {
+    clearInterval(chronoInterval);
+    chronoInterval = null;
+  }
+}
+
+function updateChronoDisplay(el, seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+// ============================================================
+//  MUSIC PROGRESS BAR
+// ============================================================
+function startMusicProgress(barId, durationSec, btnId, onEnd) {
+  if (musicInterval) clearInterval(musicInterval);
+  const bar = document.getElementById(barId);
+  if (!bar) return;
+
+  let elapsed = 0;
+  const step = 500;
+  bar.style.width = '0%';
+
+  musicInterval = setInterval(() => {
+    elapsed += step;
+    const pct = Math.min((elapsed / (durationSec * 1000)) * 100, 100);
+    bar.style.width = pct + '%';
+    if (pct >= 100) {
+      clearInterval(musicInterval);
+      if (onEnd) onEnd();
+    }
+  }, step);
+}
+
+// ============================================================
+//  POKÉBALL ANIMATION
+// ============================================================
+function animatePokeball(el) {
+  el.classList.add('pokeball-anim');
+  el.addEventListener('animationend', () => el.classList.remove('pokeball-anim'), { once: true });
+}
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  if (!container) return;
+  container.innerHTML = '';
+  const colors = ['#f7c948','#e63946','#4cc9f0','#57cc99','#f4803a','#fff'];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDuration = (2 + Math.random() * 3) + 's';
+    p.style.animationDelay = Math.random() * 2 + 's';
+    p.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+    p.style.width = (8 + Math.random() * 8) + 'px';
+    p.style.height = (12 + Math.random() * 8) + 'px';
+    container.appendChild(p);
+  }
+  playAudio('audio/win.mp3');
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+const savedScreen = localStorage.getItem('evg_screen');
+if (savedScreen && document.getElementById(savedScreen)) {
+  goTo(savedScreen);
+} else {
+  goTo('screen-01');
+}
+</script>
+</body>
+</html>
