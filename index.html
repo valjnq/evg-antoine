@@ -612,6 +612,17 @@ h2 {
   </div>
 </div>
 
+<!-- MODAL SKIP CHRONO -->
+<div id="skip-chrono-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2000; align-items:center; justify-content:center;">
+  <div style="background:#12121a; border:2px solid var(--accent-yellow); border-radius:16px; padding:32px 40px; text-align:center; display:flex; flex-direction:column; gap:20px; max-width:360px; width:90%;">
+    <div style="font-family:var(--font-display); font-size:28px; color:#fff; letter-spacing:1px;">PASSER LE CHRONO ?</div>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <button class="btn btn-secondary" onclick="closeSkipChronoModal()" style="min-width:100px;">Non</button>
+      <button class="btn" onclick="confirmSkipChrono()" style="min-width:100px; background:var(--accent-yellow); color:#000;">Oui</button>
+    </div>
+  </div>
+</div>
+
 <div id="app">
 
 <!-- ===================================================
@@ -764,7 +775,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-08" style="display:none">00:30</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-08', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-08', 30, 'screen-08b')" onmousedown="startChronoHold(this,'chrono-08',30,'screen-08b')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-08',30,'screen-08b')" ontouchend="cancelChronoHold()">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-08b')">Révéler la réponse 👀</button>
   </div>
 </div>
@@ -1005,7 +1016,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-27b" style="display:none">00:30</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-27b', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-27b', 30, 'screen-27c')" onmousedown="startChronoHold(this,'chrono-27b',30,'screen-27c')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-27b',30,'screen-27c')" ontouchend="cancelChronoHold()">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-27c')">Révéler la réponse 👀</button>
   </div>
 </div>
@@ -1141,7 +1152,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-37" style="display:none">10:00</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-37', 600, 'screen-37b')">⏱ Lancer le chrono</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-37', 600, 'screen-37b')" onmousedown="startChronoHold(this,'chrono-37',600,'screen-37b')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-37',600,'screen-37b')" ontouchend="cancelChronoHold()">⏱ Lancer le chrono</button>
   </div>
 </div>
 
@@ -1198,7 +1209,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-41" style="display:none">03:00</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-41', 180, null)">⏱ Lancer le chrono</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-41', 180, 'screen-41b')" onmousedown="startChronoHold(this,'chrono-41',180,'screen-41b')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-41',180,'screen-41b')" ontouchend="cancelChronoHold()">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-41b')">Décision Prise ! 🗳️</button>
   </div>
 </div>
@@ -1276,7 +1287,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-45a" style="display:none">05:00</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-45a', 300, null)">⏱ Lancer Round 1</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-45a', 300, 'screen-45b')" onmousedown="startChronoHold(this,'chrono-45a',300,'screen-45b')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-45a',300,'screen-45b')" ontouchend="cancelChronoHold()">⏱ Lancer Round 1</button>
     <button class="btn" onclick="stopChrono(); goTo('screen-45b')">Photo prise ! 📸</button>
   </div>
 </div>
@@ -1290,7 +1301,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-45b" style="display:none">05:00</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-45b', 300, null)">⏱ Lancer Round 2</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-45b', 300, 'screen-45c')" onmousedown="startChronoHold(this,'chrono-45b',300,'screen-45c')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-45b',300,'screen-45c')" ontouchend="cancelChronoHold()">⏱ Lancer Round 2</button>
     <button class="btn" onclick="stopChrono(); goTo('screen-45c')">Photo prise ! 📸</button>
   </div>
 </div>
@@ -1304,7 +1315,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-45c" style="display:none">05:00</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-45c', 300, null)">⏱ Lancer Round 3</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-45c', 300, 'screen-45d')" onmousedown="startChronoHold(this,'chrono-45c',300,'screen-45d')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-45c',300,'screen-45d')" ontouchend="cancelChronoHold()">⏱ Lancer Round 3</button>
     <button class="btn" onclick="stopChrono(); goTo('screen-45d')">Photo prise ! 📸</button>
   </div>
 </div>
@@ -1400,7 +1411,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-55b" style="display:none">00:30</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-55b', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-55b', 30, 'screen-55c')" onmousedown="startChronoHold(this,'chrono-55b',30,'screen-55c')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-55b',30,'screen-55c')" ontouchend="cancelChronoHold()">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-55c')">Révéler la réponse 👀</button>
   </div>
 </div>
@@ -1484,7 +1495,7 @@ h2 {
   </div>
   <div class="chrono-display" id="chrono-61b" style="display:none">00:30</div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="startChrono('chrono-61b', 30, null)">⏱ Lancer le chrono</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-61b', 30, 'screen-61c')" onmousedown="startChronoHold(this,'chrono-61b',30,'screen-61c')" onmouseup="cancelChronoHold()" onmouseleave="cancelChronoHold()" ontouchstart="startChronoHold(this,'chrono-61b',30,'screen-61c')" ontouchend="cancelChronoHold()">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-61c')">Révéler la réponse 👀</button>
   </div>
 </div>
@@ -1630,6 +1641,39 @@ function stopAllAudio() {
 function setAudioStatus(txt) {
   const el = document.getElementById('audioStatusText');
   if (el) el.textContent = txt;
+}
+
+let skipChronoNextScreen = null;
+let chronoHoldTimer = null;
+let chronoHoldBtn = null;
+
+function startChronoHold(btn, chronoId, seconds, onEndScreen) {
+  chronoHoldBtn = btn;
+  btn.classList.add('holding');
+  chronoHoldTimer = setTimeout(() => {
+    cancelChronoHold();
+    skipChronoNextScreen = onEndScreen;
+    document.getElementById('skip-chrono-modal').style.display = 'flex';
+  }, 3000);
+}
+
+function cancelChronoHold() {
+  if (chronoHoldTimer) { clearTimeout(chronoHoldTimer); chronoHoldTimer = null; }
+  if (chronoHoldBtn) { chronoHoldBtn.classList.remove('holding'); chronoHoldBtn = null; }
+}
+
+function closeSkipChronoModal() {
+  document.getElementById('skip-chrono-modal').style.display = 'none';
+  skipChronoNextScreen = null;
+}
+
+function confirmSkipChrono() {
+  document.getElementById('skip-chrono-modal').style.display = 'none';
+  stopChrono();
+  if (skipChronoNextScreen) {
+    goTo(skipChronoNextScreen);
+  }
+  skipChronoNextScreen = null;
 }
 
 // ============================================================
