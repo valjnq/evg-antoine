@@ -612,6 +612,17 @@ h2 {
   </div>
 </div>
 
+<!-- MODAL SKIP FIGHT -->
+<div id="skip-fight-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2000; align-items:center; justify-content:center;">
+  <div style="background:#12121a; border:2px solid var(--accent-green); border-radius:16px; padding:32px 40px; text-align:center; display:flex; flex-direction:column; gap:20px; max-width:360px; width:90%;">
+    <div style="font-family:var(--font-display); font-size:28px; color:#fff; letter-spacing:1px;">PASSER ?</div>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <button class="btn btn-secondary" onclick="closeSkipFightModal()" style="min-width:100px;">Non</button>
+      <button class="btn" onclick="confirmSkipFight()" style="min-width:100px; background:var(--accent-green); color:#000;">Oui</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL SKIP CHRONO -->
 <div id="skip-chrono-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2000; align-items:center; justify-content:center;">
   <div style="background:#12121a; border:2px solid var(--accent-yellow); border-radius:16px; padding:32px 40px; text-align:center; display:flex; flex-direction:column; gap:20px; max-width:360px; width:90%;">
@@ -822,7 +833,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">PREMIER ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">NOÉ</div>
-    <div class="fight-badge" style="cursor:pointer;" onclick="playAudio('audio/thresholdclassic.mp3')"  title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-11" style="cursor:pointer;" onclick="fightClick(this,'audio/thresholdclassic.mp3')" onmousedown="startFightHold(this,'screen-11')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-11')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-11"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);" id="music-11-label">♪ Threshold</div>
@@ -899,7 +910,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">DEUXIÈME ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">GWENDAL</div>
-    <div class="fight-badge" style="cursor:pointer;" onclick="playAudio('audio/wearesexbobomp.mp3')"  title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-17b" style="cursor:pointer;" onclick="fightClick(this,'audio/wearesexbobomp.mp3')" onmousedown="startFightHold(this,'screen-17b')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-17b')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-17b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ We Are Sex Bob-Omb</div>
@@ -967,7 +978,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">TROISIÈME ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">AYMERIC</div>
-    <div class="fight-badge" style="cursor:pointer;" onclick="playAudio('audio/wehateyoupleasedie.mp3')"  title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-23b" style="cursor:pointer;" onclick="fightClick(this,'audio/wehateyoupleasedie.mp3')" onmousedown="startFightHold(this,'screen-23b')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-23b')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-23b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ We Hate You Please Die</div>
@@ -1115,7 +1126,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">QUATRIÈME ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">MAXIME</div>
-    <div class="fight-badge" style="cursor:pointer;" onclick="playAudio('audio/garbagetruck.mp3')"  title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-35b" style="cursor:pointer;" onclick="fightClick(this,'audio/garbagetruck.mp3')" onmousedown="startFightHold(this,'screen-35b')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-35b')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-35b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Garbage Truck</div>
@@ -1226,7 +1237,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">CINQUIÈME ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">JASON</div>
-    <div class="fight-badge" style="cursor:pointer;" onclick="playAudio('audio/summertime.mp3')"  title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-41b" style="cursor:pointer;" onclick="fightClick(this,'audio/summertime.mp3')" onmousedown="startFightHold(this,'screen-41b')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-41b')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-41b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Summertime</div>
@@ -1438,7 +1449,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">SIXIÈME ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:52px; color:var(--accent-green); text-shadow:0 0 20px rgba(87,204,153,0.6);">ACHILLE</div>
-    <div class="fight-badge" style="cursor:pointer;" onclick="playAudio('audio/itsgettingboringbythesea.mp3')"  title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-55d" style="cursor:pointer;" onclick="fightClick(this,'audio/itsgettingboringbythesea.mp3')" onmousedown="startFightHold(this,'screen-55d')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-55d')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-55d"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ It's Getting Boring by the Sea</div>
@@ -1525,7 +1536,7 @@ h2 {
   <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
     <div style="font-family:var(--font-display); font-size:28px; color:var(--muted); letter-spacing:2px;">SEPTIÈME ADVERSAIRE</div>
     <div style="font-family:var(--font-display); font-size:64px; color:var(--accent-green); text-shadow:0 0 30px rgba(87,204,153,0.8);">FABIEN</div>
-    <div class="fight-badge" style="font-size:clamp(20px,4vw,40px); cursor:pointer;" onclick="playAudio('audio/threshold8bit.mp3')" title="Cliquer pour lancer la musique">FIGHT ! 🥊</div>
+    <div class="fight-badge" id="fight-screen-62" style="font-size:clamp(20px,4vw,40px); cursor:pointer;" onclick="fightClick(this,'audio/threshold8bit.mp3')" onmousedown="startFightHold(this,'screen-62')" onmouseup="cancelFightHold()" onmouseleave="cancelFightHold()" ontouchstart="startFightHold(this,'screen-62')" ontouchend="cancelFightHold()">FIGHT ! 🥊</div>
   </div>
   <div class="music-progress"><div class="music-bar" id="music-62"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Threshold 8-bit</div>
@@ -1643,7 +1654,62 @@ function setAudioStatus(txt) {
   if (el) el.textContent = txt;
 }
 
-let skipChronoNextScreen = null;
+function resetFightBadge(id) {
+  const el = document.getElementById(id);
+  if (el) { el.dataset.played = '0'; el.style.opacity = '1'; el.style.cursor = 'pointer'; }
+}
+
+let fightHoldTimer = null;
+let fightHoldBtn = null;
+let fightSkipScreen = null;
+
+function fightClick(el, audioFile) {
+  // Si déjà joué, ignorer
+  if (el.dataset.played === '1') return;
+  el.dataset.played = '1';
+  el.style.opacity = '0.5';
+  el.style.cursor = 'default';
+  playAudio(audioFile);
+}
+
+function startFightHold(el, screenId) {
+  fightHoldBtn = el;
+  fightSkipScreen = screenId;
+  el.classList.add('holding');
+  fightHoldTimer = setTimeout(() => {
+    cancelFightHold();
+    document.getElementById('skip-fight-modal').style.display = 'flex';
+  }, 3000);
+}
+
+function cancelFightHold() {
+  if (fightHoldTimer) { clearTimeout(fightHoldTimer); fightHoldTimer = null; }
+  if (fightHoldBtn) { fightHoldBtn.classList.remove('holding'); fightHoldBtn = null; }
+}
+
+function closeSkipFightModal() {
+  document.getElementById('skip-fight-modal').style.display = 'none';
+  fightSkipScreen = null;
+}
+
+function confirmSkipFight() {
+  document.getElementById('skip-fight-modal').style.display = 'none';
+  stopAllAudio();
+  const nextMap = {
+    'screen-11':  () => rollDice('screen-13','ombrecoeur',4),
+    'screen-17b': () => rollDice('screen-19','karlach',5),
+    'screen-23b': () => rollDice('screen-25','ombrecoeur',2),
+    'screen-35b': () => rollDice('screen-36b','ombrecoeur',4),
+    'screen-41b': () => rollDice('screen-43','karlach',5),
+    'screen-55d': () => rollDice('screen-57','ombrecoeur',1),
+    'screen-62':  () => goTo('screen-63'),
+  };
+  if (fightSkipScreen && nextMap[fightSkipScreen]) nextMap[fightSkipScreen]();
+  fightSkipScreen = null;
+}
+
+// ============================================================
+//  SKIP CHRONO
 let chronoHoldTimer = null;
 let chronoHoldBtn = null;
 
@@ -1775,13 +1841,13 @@ function updateProgress(id) {}
 function onScreenEnter(id) {
   switch(id) {
     case 'screen-01':  initScreen01(); break;
-    case 'screen-11':  startMusicProgress('music-11', 90, null, null); break;
-    case 'screen-17b': startMusicProgress('music-17b', 90, null, null); break;
-    case 'screen-23b': startMusicProgress('music-23b', 90, null, null); break;
-    case 'screen-35b': startMusicProgress('music-35b', 90, null, null); break;
-    case 'screen-41b': startMusicProgress('music-41b', 90, null, null); break;
-    case 'screen-55d': startMusicProgress('music-55d', 90, null, null); break;
-    case 'screen-62':  startMusicProgress('music-62', 90, null, null); break;
+    case 'screen-11':  startMusicProgress('music-11', 90, null, null); resetFightBadge('fight-screen-11'); break;
+    case 'screen-17b': startMusicProgress('music-17b', 90, null, null); resetFightBadge('fight-screen-17b'); break;
+    case 'screen-23b': startMusicProgress('music-23b', 90, null, null); resetFightBadge('fight-screen-23b'); break;
+    case 'screen-35b': startMusicProgress('music-35b', 90, null, null); resetFightBadge('fight-screen-35b'); break;
+    case 'screen-41b': startMusicProgress('music-41b', 90, null, null); resetFightBadge('fight-screen-41b'); break;
+    case 'screen-55d': startMusicProgress('music-55d', 90, null, null); resetFightBadge('fight-screen-55d'); break;
+    case 'screen-62':  startMusicProgress('music-62', 90, null, null); resetFightBadge('fight-screen-62'); break;
     case 'screen-17':  playAudio('audio/dow_ambiance.mp3', true); break;
     case 'screen-31':  playAudio('audio/dow_ambiance.mp3', true); break;
     case 'screen-41':  
