@@ -838,9 +838,6 @@ h2 {
   </div>
   <div class="music-progress"><div class="music-bar" id="music-11"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);" id="music-11-label">♪ Threshold</div>
-  <div class="btn-row" id="scott1-btn">
-    <button class="btn" onclick="rollDice('screen-13','ombrecoeur',4)">Suivant →</button>
-  </div>
 </div>
 
 <!-- ===================================================
@@ -1646,7 +1643,7 @@ function playAudio(src, loop = false) {
   const a = audioCache[src];
   a.loop = loop;
   a.currentTime = 0;
-  a.play().catch(() => {});
+  a.play().catch((e) => { console.error('Audio error:', src, e); });
   setAudioStatus('▶ ' + src);
   return a;
 }
@@ -1829,10 +1826,7 @@ function onScreenEnter(id) {
     case 'screen-41b': startMusicProgress('music-41b', 90, null, null); break;
     case 'screen-55d': startMusicProgress('music-55d', 90, null, null); break;
     case 'screen-62':  startMusicProgress('music-62', 90, null, null); break;
-    case 'screen-17':  playAudio('audio/dow_ambiance.mp3', true); break;
-    case 'screen-31':  playAudio('audio/dow_ambiance.mp3', true); break;
-    case 'screen-41':  
-      playAudio('audio/dow_ambiance.mp3', true);
+    case 'screen-41':
       // Show next button after chrono ends (handled in startChrono)
       break;
     case 'screen-63c': launchConfetti(); break;
