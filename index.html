@@ -229,8 +229,8 @@ h2 {
   flex-direction: column;
   gap: clamp(8px, 1.5vh, 14px);
 }
-.team-card.ombrecoeur { border-color: #e63946; }
-.team-card.karlach    { border-color: #4cc9f0; }
+.team-card.ombrecoeur { border-color: #4cc9f0; }
+.team-card.karlach    { border-color: #e63946; }
 
 .team-name {
   font-family: var(--font-display);
@@ -238,8 +238,8 @@ h2 {
   letter-spacing: 2px;
   text-align: center;
 }
-.team-name.ombrecoeur { color: #e63946; text-shadow: 0 0 16px rgba(230,57,70,0.5); }
-.team-name.karlach    { color: #4cc9f0; text-shadow: 0 0 16px rgba(76,201,240,0.5); }
+.team-name.ombrecoeur { color: #4cc9f0; text-shadow: 0 0 16px rgba(76,201,240,0.5); }
+.team-name.karlach    { color: #e63946; text-shadow: 0 0 16px rgba(230,57,70,0.5); }
 
 .players-row {
   display: grid;
@@ -341,8 +341,8 @@ h2 {
   letter-spacing: 2px;
   text-align: center;
 }
-.dice-team-label.ombrecoeur { color: #e63946; }
-.dice-team-label.karlach    { color: #4cc9f0; }
+.dice-team-label.ombrecoeur { color: #4cc9f0; }
+.dice-team-label.karlach    { color: #e63946; }
 
 /* ============================================================
    CHRONO
@@ -566,8 +566,13 @@ h2 {
 }
 .nav-arrow:active { background: rgba(255,255,255,0.2); color: #fff; }
 .nav-arrow.visible { display: flex; }
-#nav-back    { left: 20px; }
-#nav-forward { right: 20px; }
+.nav-arrow.holding { animation: holdFill 3s linear forwards; }
+@keyframes holdFill {
+  0%   { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+  100% { background: rgba(230,57,70,0.6);   border-color: #e63946; }
+}
+#nav-back    { left: 20px; top: 28px; }
+#nav-forward { right: 20px; top: 28px; }
 
 /* ============================================================
    AUDIO STATUS (debug, hidden in prod)
@@ -589,8 +594,23 @@ h2 {
 <div id="audio-status">🔊 <span id="audioStatusText">—</span></div>
 
 <!-- NAV ARROWS -->
-<button class="nav-arrow" id="nav-back"    onclick="navBack()">←</button>
+<button class="nav-arrow" id="nav-back"
+  onclick="navBack()"
+  onmousedown="startResetHold()" onmouseup="cancelResetHold()" onmouseleave="cancelResetHold()"
+  ontouchstart="startResetHold()" ontouchend="cancelResetHold()">←</button>
 <button class="nav-arrow" id="nav-forward" onclick="navForward()">→</button>
+
+<!-- MODAL RESET -->
+<div id="reset-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2000; align-items:center; justify-content:center;">
+  <div style="background:#12121a; border:2px solid #e63946; border-radius:16px; padding:32px 40px; text-align:center; display:flex; flex-direction:column; gap:20px; max-width:360px; width:90%;">
+    <div style="font-family:var(--font-display); font-size:28px; color:#fff; letter-spacing:1px;">RECOMMENCER ?</div>
+    <div style="font-size:14px; color:#888; font-family:var(--font-body);">Toute la progression sera perdue.</div>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <button class="btn btn-secondary" onclick="closeResetModal()" style="min-width:100px;">Non</button>
+      <button class="btn" onclick="confirmReset()" style="min-width:100px; background:#e63946;">Oui</button>
+    </div>
+  </div>
+</div>
 
 <div id="app">
 
@@ -629,6 +649,7 @@ h2 {
       <p>Vous <strong>DEVEZ</strong> aller jusqu'au bout.</p>
       <p>2 tours de plateau, chaque équipe compte ses points… et on verra bien ce que ça donne.</p>
       <p><strong>Bonne chance. Vous en aurez besoin.</strong></p>
+      <p>Vous allez être amenés à ouvrir les tiroirs et y récupérer des objets. Merci de ne récupérer <strong>uniquement</strong> que ce qui vous est demandé. Plusieurs épreuves peuvent se trouver dans le même tiroir.</p>
     </div>
     <div class="btn-row" style="margin-top: 16px;">
       <button class="btn" onclick="goTo('screen-equipes')">C'EST PARTI ! 🎮</button>
@@ -690,7 +711,7 @@ h2 {
     </div>
   </div>
   <div class="btn-row">
-    <button class="btn" onclick="rollDice('screen-06','ombrecoeur',3)">🎲 Lancer le dé pour commencer</button>
+    <button class="btn" onclick="rollDice('screen-06','karlach',3)">🎲 Lancer le dé pour commencer</button>
   </div>
 </div>
 
@@ -771,7 +792,7 @@ h2 {
     <p>Il est temps de <strong>frapper à la porte du donjon !</strong></p>
     <p>🗄️ Ouvrez le tiroir numéro <strong>2</strong> et prenez le paquet de cartes Munchkin.</p>
     <p>En commençant par l'équipe qui a atterri sur cette case, chacune frappe à son tour — retournez la première carte du paquet et appliquez immédiatement l'effet.</p>
-    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot ! L'effet s'inverse.</span></p>
+    <p><span class="warn">⚠️ Si Aymeric et Achille sont sur la carte : complot !</span></p>
   </div>
   <button class="btn" onclick="goTo('screen-11')">Effets appliqués ! ✅</button>
 </div>
@@ -809,7 +830,7 @@ h2 {
     <p>Aïe… Vous venez de tomber sur une <strong>case Inkfart</strong>.</p>
     <p>🗄️ Sortez <strong>5 cartes Inkfart</strong> du paquet dans le tiroir <strong>3</strong> et étalez-les face visible, côté événement.</p>
     <p>En commençant par l'équipe <strong>Ombrecoeur</strong>, choisissez une carte à tour de rôle jusqu'à ce que chaque équipe en ait 2. La 5ème carte restante retourne dans la pioche.</p>
-    <p>Appliquez les effets et conservez vos cartes.</p>
+    <p>Appliquez les effets (retournez vos cartes) et conservez vos cartes.</p>
   </div>
   <button class="btn" onclick="rollDice('screen-15','karlach',1)">ICI ✅</button>
 </div>
@@ -824,7 +845,7 @@ h2 {
     <p><strong>Vous revoilà aventuriers !</strong></p>
     <p>Aujourd'hui, épreuve culte : <strong>la dégustation !</strong></p>
     <p>Chaque équipe choisit <strong>UN participant courageux</strong>.</p>
-    <p>🗄️ Ouvrez le tiroir numéro <strong>6</strong> — votre destin s'y trouve.</p>
+    <p>🗄️ Ouvrez le tiroir numéro <strong>8</strong> — votre destin s'y trouve.</p>
     <p>La règle est simple : si vous terminez ce qui est dans votre assiette, votre équipe remporte <strong>3 points</strong>.</p>
     <p>Les deux équipes peuvent gagner… ou perdre. Tout dépend de votre courage.</p>
     <p><strong>Bon appétit !</strong> 🍴</p>
@@ -872,7 +893,6 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-17b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ We Are Sex Bob-Omb</div>
   <div class="btn-row" id="scott2-btn">
-    <button class="btn" onclick="rollDice('screen-19','karlach',4)">Passer →</button>
   </div>
 </div>
 
@@ -941,7 +961,6 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-23b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ We Hate You Please Die</div>
   <div class="btn-row" id="scott3-btn">
-    <button class="btn" onclick="rollDice('screen-25','ombrecoeur',3)">Passer →</button>
   </div>
 </div>
 
@@ -1002,7 +1021,7 @@ h2 {
     <p>2 points pour l'équipe la plus proche de 22.<br>2 points bonus pour l'équipe qui a trouvé les champions.</p>
     <p><em>En cas d'égalité, les deux équipes marquent les points.</em></p>
   </div>
-  <button class="btn" onclick="rollDice('screen-29','ombrecoeur',2)">Continuer →</button>
+  <button class="btn" onclick="rollDice('screen-29','ombrecoeur',3)">Continuer →</button>
 </div>
 
 <!-- ===================================================
@@ -1037,7 +1056,7 @@ h2 {
     <p>Les autres — <strong>observez, suspectez, démasquez</strong>.</p>
     <p>Le doute est maintenant installé dans <strong>les deux équipes</strong>. Bonne chance… ou pas. 😈</p>
   </div>
-  <button class="btn" onclick="rollDice('screen-33','ombrecoeur',6)">Cartes distribuées ! 🃏</button>
+  <button class="btn" onclick="rollDice('screen-33','ombrecoeur',5)">Cartes distribuées ! 🃏</button>
 </div>
 
 <!-- ===================================================
@@ -1090,7 +1109,6 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-35b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Garbage Truck</div>
   <div class="btn-row" id="scott4-btn">
-    <button class="btn" onclick="rollDice('screen-36b','ombrecoeur',4)">Passer →</button>
   </div>
 </div>
 
@@ -1103,7 +1121,7 @@ h2 {
   <div class="narrative-box" style="text-align:center;">
     <p>C'est reparti : <strong>vous relancez les dés !</strong></p>
   </div>
-  <!-- Auto-transition after 2s -->
+  <button class="btn" onclick="rollDice('screen-37','ombrecoeur',4)">Relancer →</button>
 </div>
 
 <!-- ===================================================
@@ -1113,17 +1131,17 @@ h2 {
   <div class="screen-icon">🔐</div>
   <div class="game-badge">ESCAPE GAME</div>
   <div class="narrative-box">
-    <p>Cette malle est arrivée accompagnée de <strong>2 coffrets</strong> — un par équipe.</p>
-    <p>À l'intérieur de chaque coffret se trouve un <strong>bonus</strong>.</p>
-    <p>Les deux équipes jouent <strong>en simultané</strong>. Vous avez <strong>5 minutes</strong> pour ouvrir votre coffret.</p>
-    <p>🗄️ Les instructions se trouvent dans le tiroir <strong>8</strong>.</p>
+    <p>Cette malle est arrivée accompagnée d'un <strong>tube fermé</strong> — regardez dans le tiroir <strong>5</strong>.</p>
+    <p>À l'intérieur se trouve un <strong>bonus</strong>.</p>
+    <p>Les deux équipes jouent <strong>en simultané</strong>. Vous avez <strong>10 minutes</strong> pour ouvrir le cadenas.</p>
+    <p>🗄️ L'énigme se trouve aussi dans le tiroir <strong>5</strong>.</p>
     <p>La première équipe qui réussit remporte son bonus. L'autre repart bredouille.</p>
     <p><span class="warn">⚠️ Si aucune équipe n'a réussi dans le temps imparti : -4 points pour tout le monde.</span></p>
     <p><strong>Bonne chance… vous en aurez besoin. ⏱️</strong></p>
   </div>
-  <div class="chrono-display" id="chrono-37" style="display:none">05:00</div>
+  <div class="chrono-display" id="chrono-37" style="display:none">10:00</div>
   <div class="btn-row">
-    <button class="btn" onclick="startChrono('chrono-37', 300, 'screen-37b')">Lancer le chrono ! ⏱️</button>
+    <button class="btn btn-secondary" onclick="startChrono('chrono-37', 600, 'screen-37b')">⏱ Lancer le chrono</button>
   </div>
 </div>
 
@@ -1139,7 +1157,7 @@ h2 {
     <p>🥈 Deuxième équipe : repart bredouille</p>
     <p><span class="warn">⚠️ Aucune équipe n'a réussi : -4 points chacune</span></p>
   </div>
-  <button class="btn" onclick="rollDice('screen-39','karlach',3)">Continuer →</button>
+  <button class="btn" onclick="rollDice('screen-39','karlach',4)">Continuer →</button>
 </div>
 
 <!-- ===================================================
@@ -1158,7 +1176,9 @@ h2 {
     <p><em>Si au bout de plusieurs longues minutes personne n'a cédé... ajoutez du piment : les porteurs marchent !</em></p>
     <p>Le duo encore debout remporte <strong>6 points</strong> pour son équipe. 💪</p>
   </div>
-  <button class="btn" onclick="rollDice('screen-41','ombrecoeur',4)">Épreuve terminée ! 🏁</button>
+  <div class="btn-row">
+    <button class="btn" onclick="rollDice('screen-41','ombrecoeur',1)">Épreuve terminée ! 🏁</button>
+  </div>
 </div>
 
 <!-- ===================================================
@@ -1177,10 +1197,8 @@ h2 {
     <p><strong>Le compte à rebours commence maintenant. 🕐</strong></p>
   </div>
   <div class="chrono-display" id="chrono-41" style="display:none">03:00</div>
-  <div id="btn-41-start" class="btn-row">
-    <button class="btn" onclick="startChrono('chrono-41', 180, null); document.getElementById('btn-41-start').style.display='none';">Lancer le chrono ! ⏱️</button>
-  </div>
-  <div class="btn-row" id="btn-41-next" style="display:none">
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="startChrono('chrono-41', 180, null)">⏱ Lancer le chrono</button>
     <button class="btn" onclick="goTo('screen-41b')">Décision Prise ! 🗳️</button>
   </div>
 </div>
@@ -1202,7 +1220,6 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-41b"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Summertime</div>
   <div class="btn-row" id="scott5-btn">
-    <button class="btn" onclick="rollDice('screen-43','karlach',2)">Passer →</button>
   </div>
 </div>
 
@@ -1232,7 +1249,7 @@ h2 {
       <rect x="2" y="47" width="96" height="6" fill="#222"/>
       <circle cx="50" cy="50" r="14" fill="#fff" stroke="#222" stroke-width="3"/>
       <circle cx="50" cy="50" r="7" fill="#e63946" stroke="#222" stroke-width="2"/>
-      <path d="M2 50 A48 48 0 0 1 98 50" fill="#f0f0f0" stroke="none"/>
+      <path d="M2 50 A48 48 0 0 0 98 50" fill="#f0f0f0" stroke="none"/>
     </svg>
   </div>
   <div class="narrative-box">
@@ -1252,7 +1269,7 @@ h2 {
   <div class="game-badge">SÉANCE PHOTO</div>
   <div class="narrative-box">
     <p>L'art de passer inaperçu en toutes situations est une qualité très importante chez les agents secrets. Mais vous n'en êtes pas… donc on va juste faire ça pour rigoler.</p>
-    <p>Vous avez <strong>5 minutes par round</strong> pour trouver tout ce qui vous tombe sous la main et incarner parfaitement votre rôle.</p>
+    <p>Vous avez <strong>5 minutes par round</strong> pour trouver tout ce qui vous tombe sous la main et incarner parfaitement le rôle que l'on vous demande. N'oubliez pas de faire votre photo. Tout le monde joue.</p>
     <p style="color:var(--accent-blue); font-weight:700;">Round 1 : SURVIVANTS DE KOH LANTA</p>
     <p>40 jours sur une île, pas de douche, pas de confort. Mais vous tenez encore debout. À peine.</p>
     <p>Tenue, pose, regard de naufragé... <strong>GO !</strong></p>
@@ -1260,7 +1277,7 @@ h2 {
   <div class="chrono-display" id="chrono-45a" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-45a', 300, null)">⏱ Lancer Round 1</button>
-    <button class="btn" onclick="goTo('screen-45b')">Photo prise ! 📸</button>
+    <button class="btn" onclick="stopChrono(); goTo('screen-45b')">Photo prise ! 📸</button>
   </div>
 </div>
 
@@ -1274,7 +1291,7 @@ h2 {
   <div class="chrono-display" id="chrono-45b" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-45b', 300, null)">⏱ Lancer Round 2</button>
-    <button class="btn" onclick="goTo('screen-45c')">Photo prise ! 📸</button>
+    <button class="btn" onclick="stopChrono(); goTo('screen-45c')">Photo prise ! 📸</button>
   </div>
 </div>
 
@@ -1288,7 +1305,7 @@ h2 {
   <div class="chrono-display" id="chrono-45c" style="display:none">05:00</div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="startChrono('chrono-45c', 300, null)">⏱ Lancer Round 3</button>
-    <button class="btn" onclick="goTo('screen-45d')">Photo prise ! 📸</button>
+    <button class="btn" onclick="stopChrono(); goTo('screen-45d')">Photo prise ! 📸</button>
   </div>
 </div>
 
@@ -1415,7 +1432,6 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-55d"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ It's Getting Boring by the Sea</div>
   <div class="btn-row" id="scott6-btn">
-    <button class="btn" onclick="rollDice('screen-57','ombrecoeur',1)">Passer →</button>
   </div>
 </div>
 
@@ -1503,7 +1519,6 @@ h2 {
   <div class="music-progress"><div class="music-bar" id="music-62"></div></div>
   <div style="font-size:13px; color:var(--muted); font-family:var(--font-title);">♪ Threshold 8-bit</div>
   <div class="btn-row" id="scott7-btn">
-    <button class="btn" onclick="goTo('screen-63')">Passer →</button>
   </div>
 </div>
 
@@ -1618,6 +1633,41 @@ function setAudioStatus(txt) {
 }
 
 // ============================================================
+//  RESET (appui long 3s sur ←)
+// ============================================================
+let resetHoldTimer = null;
+let resetHoldInterval = null;
+
+function startResetHold() {
+  const btn = document.getElementById('nav-back');
+  btn.classList.add('holding');
+  resetHoldTimer = setTimeout(() => {
+    cancelResetHold();
+    showResetModal();
+  }, 3000);
+}
+
+function cancelResetHold() {
+  if (resetHoldTimer) { clearTimeout(resetHoldTimer); resetHoldTimer = null; }
+  const btn = document.getElementById('nav-back');
+  if (btn) btn.classList.remove('holding');
+}
+
+function showResetModal() {
+  const m = document.getElementById('reset-modal');
+  m.style.display = 'flex';
+}
+
+function closeResetModal() {
+  document.getElementById('reset-modal').style.display = 'none';
+}
+
+function confirmReset() {
+  localStorage.clear();
+  location.reload();
+}
+
+// ============================================================
 //  NAVIGATION
 // ============================================================
 function goTo(id, addToHistory = true) {
@@ -1695,10 +1745,6 @@ function onScreenEnter(id) {
       // Show next button after chrono ends (handled in startChrono)
       break;
     case 'screen-63c': launchConfetti(); break;
-    case 'screen-36b': 
-      // Champi — auto transition après 2s
-      setTimeout(() => rollDice('screen-37','ombrecoeur',4), 2000);
-      break;
   }
 }
 
@@ -1802,11 +1848,6 @@ function startChrono(elId, seconds, onEndScreen) {
       playAudio('audio/chrono_end.mp3');
       el.classList.remove('urgent');
       el.textContent = '⏰ TEMPS !';
-
-      // Show "next" button for screen-41
-      if (elId === 'chrono-41') {
-        document.getElementById('btn-41-next').style.display = 'flex';
-      }
 
       if (onEndScreen) {
         setTimeout(() => goTo(onEndScreen), 1500);
